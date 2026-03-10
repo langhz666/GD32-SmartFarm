@@ -584,6 +584,21 @@
               <FileType>1</FileType>
               <FilePath>..\Driver\driver_light\iic_light.c</FilePath>
             </File>
+            <File>
+              <FileName>driver_bluetooth.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Driver\driver_bluetooth\driver_bluetooth.c</FilePath>
+            </File>
+            <File>
+              <FileName>driver_led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Driver\driver_led\driver_led.c</FilePath>
+            </File>
+            <File>
+              <FileName>driver_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Driver\driver_timer\driver_timer.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

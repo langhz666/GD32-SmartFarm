@@ -1,7 +1,5 @@
 ..\output\driver_usart.o: ..\Driver\driver_usart\driver_usart.c
 ..\output\driver_usart.o: ..\Driver\driver_usart/driver_usart.h
-..\output\driver_usart.o: ..\User\gd32f10x_libopt.h
-..\output\driver_usart.o: ..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_fmc.h
 ..\output\driver_usart.o: ..\Libraries\CMSIS\GD\GD32F10x\Include\gd32f10x.h
 ..\output\driver_usart.o: ..\Libraries\CMSIS\core_cm3.h
 ..\output\driver_usart.o: E:\soft\Keil5\ARM\ARMCC\Bin\..\include\stdint.h
@@ -9,6 +7,8 @@
 ..\output\driver_usart.o: ..\Libraries\CMSIS\core_cmFunc.h
 ..\output\driver_usart.o: ..\Libraries\CMSIS\GD\GD32F10x\Include\system_gd32f10x.h
 ..\output\driver_usart.o: ..\User\gd32f10x_libopt.h
+..\output\driver_usart.o: ..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_fmc.h
+..\output\driver_usart.o: ..\Libraries\CMSIS\GD\GD32F10x\Include\gd32f10x.h
 ..\output\driver_usart.o: ..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_pmu.h
 ..\output\driver_usart.o: ..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_bkp.h
 ..\output\driver_usart.o: ..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_rcu.h

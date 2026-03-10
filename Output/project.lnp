@@ -35,6 +35,9 @@
 "..\output\driver_encoder.o"
 "..\output\driver_light.o"
 "..\output\iic_light.o"
+"..\output\driver_bluetooth.o"
+"..\output\driver_led.o"
+"..\output\driver_timer.o"
 --library_type=microlib --strict --scatter "..\Output\project.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
