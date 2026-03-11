@@ -38,6 +38,9 @@
 "..\output\driver_bluetooth.o"
 "..\output\driver_led.o"
 "..\output\driver_timer.o"
+"..\output\driver_soil.o"
+"..\output\driver_rain.o"
+"..\output\driver_adc.o"
 --library_type=microlib --strict --scatter "..\Output\project.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

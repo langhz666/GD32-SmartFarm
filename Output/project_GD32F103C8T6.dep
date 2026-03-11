@@ -1,6 +1,6 @@
 Dependencies for Project 'project', Target 'GD32F103C8T6': (DO NOT MODIFY !)
 CompilerVersion: 5060528::V5.06 update 5 (build 528)::ARMCC
-F (..\User\main.c)(0x69AFF8E2)(--c99 --gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\Libraries\CMSIS -I ..\Libraries\CMSIS\GD\GD32F10x\Include -I ..\Libraries\GD32F10x_standard_peripheral\Include -I ..\User -I ..\Driver-IE:\soft\Keil5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.3.0\Device\Include-D__UVISION_VERSION="542" -DGD32F10X_MD -DUSE_STDPERIPH_DRIVER-o ..\output\main.o --omf_browse ..\output\main.crf --depend ..\output\main.d)
+F (..\User\main.c)(0x69B180E3)(--c99 --gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\Libraries\CMSIS -I ..\Libraries\CMSIS\GD\GD32F10x\Include -I ..\Libraries\GD32F10x_standard_peripheral\Include -I ..\User -I ..\Driver-IE:\soft\Keil5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.3.0\Device\Include-D__UVISION_VERSION="542" -DGD32F10X_MD -DUSE_STDPERIPH_DRIVER-o ..\output\main.o --omf_browse ..\output\main.crf --depend ..\output\main.d)
 I (..\Libraries\CMSIS\GD\GD32F10x\Include\gd32f10x.h)(0x69AE2EE9)
 I (..\Libraries\CMSIS\core_cm3.h)(0x60B5E9B0)
 I (E:\soft\Keil5\ARM\ARMCC\include\stdint.h)(0x588B8344)
@@ -39,10 +39,13 @@ I (..\Driver\driver_encoder/driver_encoder.h)(0x69AEAA98)
 I (..\Driver\driver_light/driver_light.h)(0x69AEC359)
 I (..\Driver\driver_light/iic_light.h)(0x69AEE3B7)
 I (E:\soft\Keil5\ARM\ARMCC\include\stdbool.h)(0x588B8344)
+I (..\Driver\driver_soil/driver_soil.h)(0x69B180A4)
+I (..\Driver\driver_rain/driver_rain.h)(0x69B180A2)
 I (..\Driver\driver_bluetooth/driver_bluetooth.h)(0x69AFE231)
 I (..\Driver\driver_timer/driver_timer.h)(0x69AFF8B1)
 I (..\Driver\driver_led/driver_led.h)(0x69AFE4B0)
 I (..\User\delay.h)(0x69A595DE)
+I (..\Driver\driver_adc/driver_adc.h)(0x69B17E74)
 I (..\User\systick.h)(0x60B5E9A9)
 I (E:\soft\Keil5\ARM\ARMCC\include\stdio.h)(0x588B8344)
 I (E:\soft\Keil5\ARM\ARMCC\include\string.h)(0x588B8344)
@@ -180,7 +183,7 @@ I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_enet.h)(0x60B5E9B0
 I (E:\soft\Keil5\ARM\ARMCC\include\stdlib.h)(0x588B8344)
 I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_misc.h)(0x60B5E9B0)
 F (..\..\GD32F10x_Firmware_Library_V2.2.1\Firmware\CMSIS\GD\GD32F10x\Source\ARM\startup_gd32f10x_md.s)(0x60B5E9B0)(--cpu Cortex-M3 -g --apcs=interwork --pd "__MICROLIB SETA 1"-IE:\soft\Keil5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.3.0\Device\Include--pd "__UVISION_VERSION SETA 542" --pd "GD32F10X_MD SETA 1" --pd "USE_STDPERIPH_DRIVER SETA 1"--list ..\lisiting\startup_gd32f10x_md.lst --xref -o ..\output\startup_gd32f10x_md.o --depend ..\output\startup_gd32f10x_md.d)
-F (..\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_adc.c)(0x60B5E9B0)(--c99 --gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\Libraries\CMSIS -I ..\Libraries\CMSIS\GD\GD32F10x\Include -I ..\Libraries\GD32F10x_standard_peripheral\Include -I ..\User -I ..\Driver-IE:\soft\Keil5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.3.0\Device\Include-D__UVISION_VERSION="542" -DGD32F10X_MD -DUSE_STDPERIPH_DRIVER-o ..\output\gd32f10x_adc.o --omf_browse ..\output\gd32f10x_adc.crf --depend ..\output\gd32f10x_adc.d)
+F (..\Libraries\GD32F10x_standard_peripheral\Source\gd32f10x_adc.c)(0x69B131B6)(--c99 --gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\Libraries\CMSIS -I ..\Libraries\CMSIS\GD\GD32F10x\Include -I ..\Libraries\GD32F10x_standard_peripheral\Include -I ..\User -I ..\Driver-IE:\soft\Keil5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.3.0\Device\Include-D__UVISION_VERSION="542" -DGD32F10X_MD -DUSE_STDPERIPH_DRIVER-o ..\output\gd32f10x_adc.o --omf_browse ..\output\gd32f10x_adc.crf --depend ..\output\gd32f10x_adc.d)
 I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_adc.h)(0x60B5E9B0)
 I (..\Libraries\CMSIS\GD\GD32F10x\Include\gd32f10x.h)(0x69AE2EE9)
 I (..\Libraries\CMSIS\core_cm3.h)(0x60B5E9B0)
@@ -1207,7 +1210,7 @@ I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_enet.h)(0x60B5E9B0
 I (E:\soft\Keil5\ARM\ARMCC\include\stdlib.h)(0x588B8344)
 I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_misc.h)(0x60B5E9B0)
 I (..\User\delay.h)(0x69A595DE)
-F (..\Driver\driver_timer\driver_timer.c)(0x69AFFB23)(--c99 --gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\Libraries\CMSIS -I ..\Libraries\CMSIS\GD\GD32F10x\Include -I ..\Libraries\GD32F10x_standard_peripheral\Include -I ..\User -I ..\Driver-IE:\soft\Keil5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.3.0\Device\Include-D__UVISION_VERSION="542" -DGD32F10X_MD -DUSE_STDPERIPH_DRIVER-o ..\output\driver_timer.o --omf_browse ..\output\driver_timer.crf --depend ..\output\driver_timer.d)
+F (..\Driver\driver_timer\driver_timer.c)(0x69B149EA)(--c99 --gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\Libraries\CMSIS -I ..\Libraries\CMSIS\GD\GD32F10x\Include -I ..\Libraries\GD32F10x_standard_peripheral\Include -I ..\User -I ..\Driver-IE:\soft\Keil5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.3.0\Device\Include-D__UVISION_VERSION="542" -DGD32F10X_MD -DUSE_STDPERIPH_DRIVER-o ..\output\driver_timer.o --omf_browse ..\output\driver_timer.crf --depend ..\output\driver_timer.d)
 I (..\Driver\driver_timer/driver_timer.h)(0x69AFF8B1)
 I (..\Libraries\CMSIS\GD\GD32F10x\Include\gd32f10x.h)(0x69AE2EE9)
 I (..\Libraries\CMSIS\core_cm3.h)(0x60B5E9B0)
@@ -1241,4 +1244,108 @@ I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_enet.h)(0x60B5E9B0
 I (E:\soft\Keil5\ARM\ARMCC\include\stdlib.h)(0x588B8344)
 I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_misc.h)(0x60B5E9B0)
 I (..\Driver\driver_led/driver_led.h)(0x69AFE4B0)
+I (..\User\delay.h)(0x69A595DE)
+F (..\Driver\driver_soil\driver_soil.c)(0x69B17DF7)(--c99 --gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\Libraries\CMSIS -I ..\Libraries\CMSIS\GD\GD32F10x\Include -I ..\Libraries\GD32F10x_standard_peripheral\Include -I ..\User -I ..\Driver-IE:\soft\Keil5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.3.0\Device\Include-D__UVISION_VERSION="542" -DGD32F10X_MD -DUSE_STDPERIPH_DRIVER-o ..\output\driver_soil.o --omf_browse ..\output\driver_soil.crf --depend ..\output\driver_soil.d)
+I (..\Driver\driver_soil/driver_soil.h)(0x69B180A4)
+I (..\Libraries\CMSIS\GD\GD32F10x\Include\gd32f10x.h)(0x69AE2EE9)
+I (..\Libraries\CMSIS\core_cm3.h)(0x60B5E9B0)
+I (E:\soft\Keil5\ARM\ARMCC\include\stdint.h)(0x588B8344)
+I (..\Libraries\CMSIS\core_cmInstr.h)(0x60B5E9B0)
+I (..\Libraries\CMSIS\core_cmFunc.h)(0x60B5E9B0)
+I (..\Libraries\CMSIS\GD\GD32F10x\Include\system_gd32f10x.h)(0x60B5E9B0)
+I (..\User\gd32f10x_libopt.h)(0x60B5E9AA)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_fmc.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_pmu.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_bkp.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_rcu.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_exti.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_gpio.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_crc.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_dma.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_dbg.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_adc.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_dac.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_fwdgt.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_wwdgt.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_rtc.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_timer.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_usart.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_i2c.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_spi.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_sdio.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_exmc.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_can.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_enet.h)(0x60B5E9B0)
+I (E:\soft\Keil5\ARM\ARMCC\include\stdlib.h)(0x588B8344)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_misc.h)(0x60B5E9B0)
+I (..\Driver\driver_adc/driver_adc.h)(0x69B17E74)
+I (..\User\delay.h)(0x69A595DE)
+F (..\Driver\driver_rain\driver_rain.c)(0x69B1809C)(--c99 --gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\Libraries\CMSIS -I ..\Libraries\CMSIS\GD\GD32F10x\Include -I ..\Libraries\GD32F10x_standard_peripheral\Include -I ..\User -I ..\Driver-IE:\soft\Keil5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.3.0\Device\Include-D__UVISION_VERSION="542" -DGD32F10X_MD -DUSE_STDPERIPH_DRIVER-o ..\output\driver_rain.o --omf_browse ..\output\driver_rain.crf --depend ..\output\driver_rain.d)
+I (..\Driver\driver_rain/driver_rain.h)(0x69B180A2)
+I (..\Libraries\CMSIS\GD\GD32F10x\Include\gd32f10x.h)(0x69AE2EE9)
+I (..\Libraries\CMSIS\core_cm3.h)(0x60B5E9B0)
+I (E:\soft\Keil5\ARM\ARMCC\include\stdint.h)(0x588B8344)
+I (..\Libraries\CMSIS\core_cmInstr.h)(0x60B5E9B0)
+I (..\Libraries\CMSIS\core_cmFunc.h)(0x60B5E9B0)
+I (..\Libraries\CMSIS\GD\GD32F10x\Include\system_gd32f10x.h)(0x60B5E9B0)
+I (..\User\gd32f10x_libopt.h)(0x60B5E9AA)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_fmc.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_pmu.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_bkp.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_rcu.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_exti.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_gpio.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_crc.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_dma.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_dbg.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_adc.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_dac.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_fwdgt.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_wwdgt.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_rtc.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_timer.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_usart.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_i2c.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_spi.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_sdio.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_exmc.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_can.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_enet.h)(0x60B5E9B0)
+I (E:\soft\Keil5\ARM\ARMCC\include\stdlib.h)(0x588B8344)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_misc.h)(0x60B5E9B0)
+I (..\Driver\driver_adc/driver_adc.h)(0x69B17E74)
+I (..\User\delay.h)(0x69A595DE)
+F (..\Driver\driver_adc\driver_adc.c)(0x69B17E71)(--c99 --gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\Libraries\CMSIS -I ..\Libraries\CMSIS\GD\GD32F10x\Include -I ..\Libraries\GD32F10x_standard_peripheral\Include -I ..\User -I ..\Driver-IE:\soft\Keil5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.3.0\Device\Include-D__UVISION_VERSION="542" -DGD32F10X_MD -DUSE_STDPERIPH_DRIVER-o ..\output\driver_adc.o --omf_browse ..\output\driver_adc.crf --depend ..\output\driver_adc.d)
+I (..\Driver\driver_adc/driver_adc.h)(0x69B17E74)
+I (..\Libraries\CMSIS\GD\GD32F10x\Include\gd32f10x.h)(0x69AE2EE9)
+I (..\Libraries\CMSIS\core_cm3.h)(0x60B5E9B0)
+I (E:\soft\Keil5\ARM\ARMCC\include\stdint.h)(0x588B8344)
+I (..\Libraries\CMSIS\core_cmInstr.h)(0x60B5E9B0)
+I (..\Libraries\CMSIS\core_cmFunc.h)(0x60B5E9B0)
+I (..\Libraries\CMSIS\GD\GD32F10x\Include\system_gd32f10x.h)(0x60B5E9B0)
+I (..\User\gd32f10x_libopt.h)(0x60B5E9AA)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_fmc.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_pmu.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_bkp.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_rcu.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_exti.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_gpio.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_crc.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_dma.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_dbg.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_adc.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_dac.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_fwdgt.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_wwdgt.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_rtc.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_timer.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_usart.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_i2c.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_spi.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_sdio.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_exmc.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_can.h)(0x60B5E9B0)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_enet.h)(0x60B5E9B0)
+I (E:\soft\Keil5\ARM\ARMCC\include\stdlib.h)(0x588B8344)
+I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_misc.h)(0x60B5E9B0)
 I (..\User\delay.h)(0x69A595DE)

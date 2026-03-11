@@ -599,6 +599,21 @@
               <FileType>1</FileType>
               <FilePath>..\Driver\driver_timer\driver_timer.c</FilePath>
             </File>
+            <File>
+              <FileName>driver_soil.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Driver\driver_soil\driver_soil.c</FilePath>
+            </File>
+            <File>
+              <FileName>driver_rain.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Driver\driver_rain\driver_rain.c</FilePath>
+            </File>
+            <File>
+              <FileName>driver_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Driver\driver_adc\driver_adc.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

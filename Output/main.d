@@ -38,10 +38,13 @@
 ..\output\main.o: ..\Driver\driver_light/driver_light.h
 ..\output\main.o: ..\Driver\driver_light/iic_light.h
 ..\output\main.o: E:\soft\Keil5\ARM\ARMCC\Bin\..\include\stdbool.h
+..\output\main.o: ..\Driver\driver_soil/driver_soil.h
+..\output\main.o: ..\Driver\driver_rain/driver_rain.h
 ..\output\main.o: ..\Driver\driver_bluetooth/driver_bluetooth.h
 ..\output\main.o: ..\Driver\driver_timer/driver_timer.h
 ..\output\main.o: ..\Driver\driver_led/driver_led.h
 ..\output\main.o: ..\User\delay.h
+..\output\main.o: ..\Driver\driver_adc/driver_adc.h
 ..\output\main.o: ..\User\systick.h
 ..\output\main.o: E:\soft\Keil5\ARM\ARMCC\Bin\..\include\stdio.h
 ..\output\main.o: E:\soft\Keil5\ARM\ARMCC\Bin\..\include\string.h
