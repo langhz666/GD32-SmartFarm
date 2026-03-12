@@ -12,6 +12,7 @@
 #include "driver_bluetooth/driver_bluetooth.h"
 #include "driver_timer/driver_timer.h"
 #include "driver_key/driver_key.h"
+#include "driver_buzzer/driver_buzzer.h"
 #include "driver_led/driver_led.h"
 #include "driver_adc/driver_adc.h"
 #include "systick.h"
@@ -42,6 +43,7 @@ int main(void)
     AHT20_Init();		//初始化AHT20模块
     BMP280_Init();		//初始化BMP280模块
     Key_Init();		//按键初始化
+    Buzzer_PWM_Init();
     ADC_DMA_MultiChannel_Init();
     OLED_ShowString(1, 1, "Nums:", OLED_8X16);			
     OLED_ShowString(1, 17, "Light:", OLED_8X16);		    
@@ -58,10 +60,12 @@ int main(void)
             {
             case KEY1_PRES:
                 printf("KEY1 pressed\r\n");
+                Buzzer_On();
                 break;
 
             case KEY2_PRES:
                 printf("KEY2 pressed\r\n");
+                Buzzer_Off();
                 break;
 
             default:
