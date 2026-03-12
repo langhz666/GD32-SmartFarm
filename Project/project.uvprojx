@@ -614,6 +614,16 @@
               <FileType>1</FileType>
               <FilePath>..\Driver\driver_adc\driver_adc.c</FilePath>
             </File>
+            <File>
+              <FileName>driver_aht20.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Driver\driver_aht20\driver_aht20.c</FilePath>
+            </File>
+            <File>
+              <FileName>driver_bmp280.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Driver\driver_bmp280\driver_bmp280.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

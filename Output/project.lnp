@@ -41,6 +41,8 @@
 "..\output\driver_soil.o"
 "..\output\driver_rain.o"
 "..\output\driver_adc.o"
+"..\output\driver_aht20.o"
+"..\output\driver_bmp280.o"
 --library_type=microlib --strict --scatter "..\Output\project.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
