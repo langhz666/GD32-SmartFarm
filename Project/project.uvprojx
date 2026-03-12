@@ -624,6 +624,16 @@
               <FileType>1</FileType>
               <FilePath>..\Driver\driver_bmp280\driver_bmp280.c</FilePath>
             </File>
+            <File>
+              <FileName>driver_key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Driver\driver_key\driver_key.c</FilePath>
+            </File>
+            <File>
+              <FileName>driver_buzzer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Driver\driver_buzzer\driver_buzzer.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

@@ -46,6 +46,7 @@
 ..\output\main.o: ..\Driver\driver_bluetooth/driver_bluetooth.h
 ..\output\main.o: ..\Driver\driver_timer/driver_timer.h
 ..\output\main.o: ..\Driver\driver_led/driver_led.h
+..\output\main.o: ..\Driver\driver_key/driver_key.h
 ..\output\main.o: ..\Driver\driver_adc/driver_adc.h
 ..\output\main.o: ..\User\systick.h
 ..\output\main.o: E:\soft\Keil5\ARM\ARMCC\Bin\..\include\stdio.h

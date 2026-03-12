@@ -33,7 +33,6 @@
 ..\output\driver_bluetooth.o: E:\soft\Keil5\ARM\ARMCC\Bin\..\include\stdlib.h
 ..\output\driver_bluetooth.o: ..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_misc.h
 ..\output\driver_bluetooth.o: ..\Driver\driver_usart/driver_usart.h
-..\output\driver_bluetooth.o: ..\Driver\driver_led/driver_led.h
-..\output\driver_bluetooth.o: ..\User\delay.h
 ..\output\driver_bluetooth.o: E:\soft\Keil5\ARM\ARMCC\Bin\..\include\stdio.h
+..\output\driver_bluetooth.o: ..\User\delay.h
 ..\output\driver_bluetooth.o: E:\soft\Keil5\ARM\ARMCC\Bin\..\include\string.h

@@ -2,7 +2,6 @@
 #include "gd32f10x_libopt.h"
 #include "gd32f10x.h"
 #include "driver_usart/driver_usart.h"
-#include "driver_led/driver_led.h"
 #include <stdio.h>
 #include "delay.h"
 #include <string.h>
@@ -18,9 +17,6 @@ extern volatile uint8_t usart0_rx_flag;
 uint8_t blt_rx_buffer[BLT_RX_BUF_SIZE];
 volatile uint16_t blt_rx_count = 0;
 volatile uint8_t blt_rx_complete_flag = 0;
-
-// 控制led的状态
-uint8_t led_blink_mode = 0;
 
 /* 如果取消下面这行的注释，系统将使用重映射的 USART1 引脚 (PD5/PD6 作为 USART1 的发送/接收引脚) 
    而不是默认引脚 (PA2/PA3) */
@@ -176,9 +172,7 @@ void blt_forward_to_pc(void)
 #if BLT_DEBUG_ENABLE
         uart_send_string(USART0, "[Debug] End of USART1 data\r\n");
 #endif
-        memset(blt_rx_buffer, 0, BLT_RX_BUF_SIZE); /* 清空缓冲区，防止旧数据干扰下一次解析 */
-        blt_rx_count = 0;                          /* 接收计数器归零，准备接收下一包数据的第一个字节 */
-        blt_rx_complete_flag = 0;                  /* 接收完成标志位清零，打破死循环 */    
+        
     }
 }
 
@@ -197,9 +191,12 @@ void blt_led_control(char *cmd)
     */
     if (strstr(cmd, "1") != NULL || strstr(cmd, "ON") != NULL || strstr(cmd, "on") != NULL) 
     {
-        /* 点亮 LED */
-        led_blink_mode = 0;
-        ledstate_set(1); // 低电平点亮 LED
+        /* 控制引脚电平。
+           注意：很多开发板的 LED 是拉低点亮 (低电平有效)。
+           如果是低电平点亮，请使用 gpio_bit_reset(LED_PORT, LED_PIN); 
+           这里演示高电平点亮：
+        */
+        gpio_bit_set(LED_PORT, LED_PIN); 
         
 #if BLT_DEBUG_ENABLE
         uart_send_string(USART0, "[Action] Command match: Turn ON LED\r\n");
@@ -211,37 +208,13 @@ void blt_led_control(char *cmd)
     else if (strstr(cmd, "0") != NULL || strstr(cmd, "OFF") != NULL || strstr(cmd, "off") != NULL) 
     {
         /* 熄灭 LED */
-        led_blink_mode = 0;
-        ledstate_set(0); // 高电平熄灭 LED
+        gpio_bit_reset(LED_PORT, LED_PIN);
         
 #if BLT_DEBUG_ENABLE
         uart_send_string(USART0, "[Action] Command match: Turn OFF LED\r\n");
 #endif
         blt_send_string("Action: LED OFF\r\n");
     }
-    /* 支持发送 "2"、"toggle" 或 "TOGGLE" 翻转 */
-    else if (strstr(cmd, "2") != NULL || strstr(cmd, "TOGGLE") != NULL || strstr(cmd, "toggle") != NULL) 
-    {
-        /* 切换 LED 状态 */
-        led_blink_mode = 0;
-        led_toggle(); // 切换 LED 状态
-        
-#if BLT_DEBUG_ENABLE
-        uart_send_string(USART0, "[Action] Command match: TOGGLE LED\r\n");
-#endif
-        blt_send_string("Action: LED TOGGLE\r\n");
-    }
-    else if (strstr(cmd, "3") != NULL || strstr(cmd, "blink") != NULL || strstr(cmd, "BLINK") != NULL)
-    {
-        /* LED 闪烁 */
-        led_blink_mode = 1;
-    
-#if BLT_DEBUG_ENABLE
-        uart_send_string(USART0, "[Action] Command match: LED BLINK\r\n");
-#endif
-        blt_send_string("Action: LED BLINK\r\n");
-    } 
-
     else 
     {
         /* 收到无法解析的指令 */
