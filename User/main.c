@@ -51,7 +51,7 @@ int main(void)
     OLED_ShowString(1, 1, "Nums:", OLED_8X16);			
     OLED_ShowString(1, 17, "Light:", OLED_8X16);		    
     OLED_Update();//更新OLED显示内容
-   
+    W25Q64_Test();
     while(1)
     {
         uint8_t key = Key_Scan(0);

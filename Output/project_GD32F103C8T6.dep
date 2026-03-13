@@ -1,6 +1,6 @@
 Dependencies for Project 'project', Target 'GD32F103C8T6': (DO NOT MODIFY !)
 CompilerVersion: 5060528::V5.06 update 5 (build 528)::ARMCC
-F (..\User\main.c)(0x69B3CFDF)(--c99 --gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\Libraries\CMSIS -I ..\Libraries\CMSIS\GD\GD32F10x\Include -I ..\Libraries\GD32F10x_standard_peripheral\Include -I ..\User -I ..\Driver-IE:\soft\Keil5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.3.0\Device\Include-D__UVISION_VERSION="542" -DGD32F10X_MD -DUSE_STDPERIPH_DRIVER-o ..\output\main.o --omf_browse ..\output\main.crf --depend ..\output\main.d)
+F (..\User\main.c)(0x69B3D36F)(--c99 --gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\Libraries\CMSIS -I ..\Libraries\CMSIS\GD\GD32F10x\Include -I ..\Libraries\GD32F10x_standard_peripheral\Include -I ..\User -I ..\Driver-IE:\soft\Keil5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.3.0\Device\Include-D__UVISION_VERSION="542" -DGD32F10X_MD -DUSE_STDPERIPH_DRIVER-o ..\output\main.o --omf_browse ..\output\main.crf --depend ..\output\main.d)
 I (..\Libraries\CMSIS\GD\GD32F10x\Include\gd32f10x.h)(0x69AE2EE9)
 I (..\Libraries\CMSIS\core_cm3.h)(0x60B5E9B0)
 I (E:\soft\Keil5\ARM\ARMCC\include\stdint.h)(0x588B8344)
@@ -48,7 +48,7 @@ I (..\Driver\driver_bluetooth/driver_bluetooth.h)(0x69AFE231)
 I (..\Driver\driver_timer/driver_timer.h)(0x69AFF8B1)
 I (..\Driver\driver_led/driver_led.h)(0x69B3C09C)
 I (..\Driver\driver_key/driver_key.h)(0x69B3C148)
-I (..\Driver\driver_w25q64/driver_w25q64.h)(0x69B3D19B)
+I (..\Driver\driver_w25q64/driver_w25q64.h)(0x69B3D360)
 I (E:\soft\Keil5\ARM\ARMCC\include\stdio.h)(0x588B8344)
 I (E:\soft\Keil5\ARM\ARMCC\include\string.h)(0x588B8344)
 I (..\Driver\driver_buzzer/driver_buzzer.h)(0x69B2DC08)
@@ -1458,7 +1458,7 @@ I (E:\soft\Keil5\ARM\ARMCC\include\stdlib.h)(0x588B8344)
 I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_misc.h)(0x60B5E9B0)
 I (..\User\delay.h)(0x69A595DE)
 I (E:\soft\Keil5\ARM\ARMCC\include\stdio.h)(0x588B8344)
-F (..\Driver\driver_buzzer\driver_buzzer.c)(0x69B3BABB)(--c99 --gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\Libraries\CMSIS -I ..\Libraries\CMSIS\GD\GD32F10x\Include -I ..\Libraries\GD32F10x_standard_peripheral\Include -I ..\User -I ..\Driver-IE:\soft\Keil5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.3.0\Device\Include-D__UVISION_VERSION="542" -DGD32F10X_MD -DUSE_STDPERIPH_DRIVER-o ..\output\driver_buzzer.o --omf_browse ..\output\driver_buzzer.crf --depend ..\output\driver_buzzer.d)
+F (..\Driver\driver_buzzer\driver_buzzer.c)(0x69B3D21E)(--c99 --gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\Libraries\CMSIS -I ..\Libraries\CMSIS\GD\GD32F10x\Include -I ..\Libraries\GD32F10x_standard_peripheral\Include -I ..\User -I ..\Driver-IE:\soft\Keil5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.3.0\Device\Include-D__UVISION_VERSION="542" -DGD32F10X_MD -DUSE_STDPERIPH_DRIVER-o ..\output\driver_buzzer.o --omf_browse ..\output\driver_buzzer.crf --depend ..\output\driver_buzzer.d)
 I (..\Driver\driver_buzzer/driver_buzzer.h)(0x69B2DC08)
 I (..\Libraries\CMSIS\GD\GD32F10x\Include\gd32f10x.h)(0x69AE2EE9)
 I (..\Libraries\CMSIS\core_cm3.h)(0x60B5E9B0)
@@ -1491,8 +1491,8 @@ I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_can.h)(0x60B5E9B0)
 I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_enet.h)(0x60B5E9B0)
 I (E:\soft\Keil5\ARM\ARMCC\include\stdlib.h)(0x588B8344)
 I (..\Libraries\GD32F10x_standard_peripheral\Include\gd32f10x_misc.h)(0x60B5E9B0)
-F (..\Driver\driver_w25q64\driver_w25q64.c)(0x69B3D07D)(--c99 --gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\Libraries\CMSIS -I ..\Libraries\CMSIS\GD\GD32F10x\Include -I ..\Libraries\GD32F10x_standard_peripheral\Include -I ..\User -I ..\Driver-IE:\soft\Keil5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.3.0\Device\Include-D__UVISION_VERSION="542" -DGD32F10X_MD -DUSE_STDPERIPH_DRIVER-o ..\output\driver_w25q64.o --omf_browse ..\output\driver_w25q64.crf --depend ..\output\driver_w25q64.d)
-I (..\Driver\driver_w25q64/driver_w25q64.h)(0x69B3D19B)
+F (..\Driver\driver_w25q64\driver_w25q64.c)(0x69B3D36C)(--c99 --gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I ..\Libraries\CMSIS -I ..\Libraries\CMSIS\GD\GD32F10x\Include -I ..\Libraries\GD32F10x_standard_peripheral\Include -I ..\User -I ..\Driver-IE:\soft\Keil5\ARM\PACK\GigaDevice\GD32F10x_DFP\2.3.0\Device\Include-D__UVISION_VERSION="542" -DGD32F10X_MD -DUSE_STDPERIPH_DRIVER-o ..\output\driver_w25q64.o --omf_browse ..\output\driver_w25q64.crf --depend ..\output\driver_w25q64.d)
+I (..\Driver\driver_w25q64/driver_w25q64.h)(0x69B3D360)
 I (..\Libraries\CMSIS\GD\GD32F10x\Include\gd32f10x.h)(0x69AE2EE9)
 I (..\Libraries\CMSIS\core_cm3.h)(0x60B5E9B0)
 I (E:\soft\Keil5\ARM\ARMCC\include\stdint.h)(0x588B8344)
