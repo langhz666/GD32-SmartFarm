@@ -31,6 +31,7 @@
 /* Scheduler includes. */
 #include "FreeRTOS.h"
 #include "task.h"
+#include "system_gd32f10x.h"
 
 #ifndef configKERNEL_INTERRUPT_PRIORITY
     #define configKERNEL_INTERRUPT_PRIORITY    255

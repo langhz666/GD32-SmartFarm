@@ -1,0 +1,52 @@
+/*
+ * @Author: langhz666 3204498297@qq.com
+ * @Date: 2026-03-13 18:04:36
+ * @LastEditors: langhz666 3204498297@qq.com
+ * @LastEditTime: 2026-03-13 23:09:42
+ * @FilePath: \GD32F103C8T6\App\app.h
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
+#ifndef _APP_H
+#define _APP_H
+
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+#include "semphr.h"
+#include "gd32f10x.h"
+
+#define TASK_PRIORITY_LED         (tskIDLE_PRIORITY + 2)
+#define TASK_PRIORITY_OLED        (tskIDLE_PRIORITY + 2)
+#define TASK_PRIORITY_KEY         (tskIDLE_PRIORITY + 3)
+#define TASK_PRIORITY_SENSOR      (tskIDLE_PRIORITY + 1)
+#define TASK_PRIORITY_BLUETOOTH   (tskIDLE_PRIORITY + 1)
+#define TASK_PRIORITY_ENCODER     (tskIDLE_PRIORITY + 2)
+
+#define TASK_STACK_SIZE_LED       64
+#define TASK_STACK_SIZE_OLED      128
+#define TASK_STACK_SIZE_KEY       64
+#define TASK_STACK_SIZE_SENSOR    128
+#define TASK_STACK_SIZE_BLUETOOTH 128
+#define TASK_STACK_SIZE_ENCODER   64
+
+typedef struct {
+    float temp0;
+    float temp1;
+    float humi;
+    float press;
+    uint16_t light;
+    uint16_t soil;
+    uint16_t rain;
+} SensorData_t;
+
+typedef enum {
+    PAGE_HOME = 0,
+    PAGE_RANGE_1 = 1,
+    PAGE_RANGE_2 = 2
+} DisplayPage_t;
+
+void App_CreateTasks(void);
+void App_CreateQueues(void);
+void App_CreateSemaphores(void);
+
+#endif

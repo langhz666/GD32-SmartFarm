@@ -8,7 +8,7 @@
 #define configTICK_RATE_HZ                      1000
 #define configMAX_PRIORITIES                    5
 #define configMINIMAL_STACK_SIZE                128
-#define configTOTAL_HEAP_SIZE                   15360  // 15KB，根据实际RAM调整
+#define configTOTAL_HEAP_SIZE                   6144  // 6KB��ΪGD32F103C8T6�Ż�
 #define configMAX_TASK_NAME_LEN                 16
 #define configUSE_16_BIT_TICKS                  0
 #define configIDLE_SHOULD_YIELD                 1
@@ -28,8 +28,8 @@
 #define configCHECK_FOR_STACK_OVERFLOW         2
 #define configRECORD_STACK_HIGH_ADDRESS         1
 
-#define configUSE_TRACE_FACILITY                1
-#define configUSE_STATS_FORMATTING_FUNCTIONS    1
+#define configUSE_TRACE_FACILITY                0
+#define configUSE_STATS_FORMATTING_FUNCTIONS    0
 
 #define configASSERT(x) if((x) == 0) { taskDISABLE_INTERRUPTS(); for(;;); }
 

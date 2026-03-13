@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\Libraries\CMSIS;..\Libraries\CMSIS\GD\GD32F10x\Include;..\Libraries\GD32F10x_standard_peripheral\Include;..\User;..\Driver;..\Middle\Freertos\Source\include;..\Middle\Freertos\Source\portable\RVDS\ARM_CM3;..\Middle\Freertos</IncludePath>
+              <IncludePath>..\Libraries\CMSIS;..\Libraries\CMSIS\GD\GD32F10x\Include;..\Libraries\GD32F10x_standard_peripheral\Include;..\User;..\Driver;..\Middle\Freertos\Source\include;..\Middle\Freertos\Source\portable\RVDS\ARM_CM3;..\Middle\Freertos;..\App</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -383,6 +383,13 @@
       <Groups>
         <Group>
           <GroupName>App</GroupName>
+          <Files>
+            <File>
+              <FileName>app.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\App\app.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>User</GroupName>

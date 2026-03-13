@@ -37,6 +37,10 @@ OF SUCH DAMAGE.
 #include "gd32f10x_it.h"
 #include "main.h"
 #include "systick.h"
+#include "FreeRTOS.h"
+#include "task.h"
+
+extern void xPortSysTickHandler(void);
 
 /*!
     \brief      this function handles NMI exception
@@ -95,38 +99,11 @@ void BusFault_Handler(void)
 */
 void UsageFault_Handler(void)
 {
-    /* if Usage Fault exception occurs, go to infinite loop */
     while(1){
     }
 }
 
-/*!
-    \brief      this function handles SVC exception
-    \param[in]  none
-    \param[out] none
-    \retval     none
-*/
-void SVC_Handler(void)
-{
-}
-
-/*!
-    \brief      this function handles DebugMon exception
-    \param[in]  none
-    \param[out] none
-    \retval     none
-*/
 void DebugMon_Handler(void)
-{
-}
-
-/*!
-    \brief      this function handles PendSV exception
-    \param[in]  none
-    \param[out] none
-    \retval     none
-*/
-void PendSV_Handler(void)
 {
 }
 
@@ -138,6 +115,10 @@ void PendSV_Handler(void)
 */
 void SysTick_Handler(void)
 {
-    //led_spark();
-    delay_decrement();
+#if (INCLUDE_xTaskGetSchedulerState != 0)
+    if (xTaskGetSchedulerState() != taskSCHEDULER_NOT_STARTED)
+#endif
+    {
+        xPortSysTickHandler();
+    }
 }
