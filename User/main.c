@@ -12,6 +12,7 @@
 #include "driver_bluetooth/driver_bluetooth.h"
 #include "driver_timer/driver_timer.h"
 #include "driver_key/driver_key.h"
+#include "driver_w25q64/driver_w25q64.h"
 #include "driver_buzzer/driver_buzzer.h"
 #include "driver_led/driver_led.h"
 #include "driver_adc/driver_adc.h"
@@ -19,6 +20,7 @@
 #include "delay.h"
 #include <stdio.h>
 #include <string.h>
+
 
 
 
@@ -32,7 +34,7 @@ float temp1 = 0.0f;	        //定义温度变量
 int main(void)
 {
     nvic_priority_group_set(NVIC_PRIGROUP_PRE2_SUB2);
-    ledboard_init();
+    led_init();
     DelayInit();
     usart_config();
     blt_config();
@@ -42,14 +44,14 @@ int main(void)
     IIC_Light_Init();	//IIC初始化
     AHT20_Init();		//初始化AHT20模块
     BMP280_Init();		//初始化BMP280模块
-    Key_Init();		//按键初始化
+    Key_Init();		//按键初始化 
+    W25Q64_Init();
     Buzzer_PWM_Init();
     ADC_DMA_MultiChannel_Init();
     OLED_ShowString(1, 1, "Nums:", OLED_8X16);			
     OLED_ShowString(1, 17, "Light:", OLED_8X16);		    
     OLED_Update();//更新OLED显示内容
-    printf("hello world\r\n");
-    printf("Key Test Start\r\n");
+   
     while(1)
     {
         uint8_t key = Key_Scan(0);
@@ -60,12 +62,12 @@ int main(void)
             {
             case KEY1_PRES:
                 printf("KEY1 pressed\r\n");
-                Buzzer_On();
+                led_toggle(1);
                 break;
 
             case KEY2_PRES:
                 printf("KEY2 pressed\r\n");
-                Buzzer_Off();
+                led_toggle(2);
                 break;
 
             default:

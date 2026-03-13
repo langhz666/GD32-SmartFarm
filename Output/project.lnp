@@ -45,6 +45,7 @@
 "..\output\driver_bmp280.o"
 "..\output\driver_key.o"
 "..\output\driver_buzzer.o"
+"..\output\driver_w25q64.o"
 --library_type=microlib --strict --scatter "..\Output\project.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

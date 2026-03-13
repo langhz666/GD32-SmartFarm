@@ -634,6 +634,11 @@
               <FileType>1</FileType>
               <FilePath>..\Driver\driver_buzzer\driver_buzzer.c</FilePath>
             </File>
+            <File>
+              <FileName>driver_w25q64.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Driver\driver_w25q64\driver_w25q64.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

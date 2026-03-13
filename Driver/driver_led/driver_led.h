@@ -4,13 +4,27 @@
 #include "gd32f10x.h"
 #include "delay.h"
 
-void ledboard_init(void);
 
-void ledstate_set(uint8_t state);
+#define LED0_GPIO_PORT GPIOC
+#define LED0_GPIO_CLK RCU_GPIOC
+#define LED0_GPIO_PIN GPIO_PIN_13
 
-void led_toggle(void);
+#define LED1_GPIO_PORT GPIOB
+#define LED1_GPIO_CLK RCU_GPIOB
+#define LED1_GPIO_PIN GPIO_PIN_8
 
-void led_blink(uint16_t blink);
+#define LED2_GPIO_PORT GPIOB
+#define LED2_GPIO_CLK RCU_GPIOB
+#define LED2_GPIO_PIN GPIO_PIN_9
+
+
+void led_init(void);
+
+void ledstate_set(uint8_t led, uint8_t state);
+
+void led_toggle(uint8_t led);
+
+void led_blink(uint8_t led, uint16_t blink);
 
 #endif
 

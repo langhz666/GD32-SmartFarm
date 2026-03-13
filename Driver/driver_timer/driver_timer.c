@@ -48,7 +48,7 @@ void TIMER2_IRQHandler(void)
         /* 2. 判断当前是否处于闪烁模式 */
         if(led_blink_mode == 1)
         {
-            led_toggle(); // 执行一次翻转
+            led_toggle(0); // 执行一次翻转
         }
     }
 }

@@ -5,7 +5,7 @@
 
 #define KEY_RCU      RCU_GPIOC
 #define KEY_PORT     GPIOC
-#define KEY1_PIN     GPIO_PIN_13
+#define KEY1_PIN     GPIO_PIN_14
 #define KEY2_PIN     GPIO_PIN_15
 // #define KEY3_PIN     GPIO_PIN_15
 
