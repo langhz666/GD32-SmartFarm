@@ -1,5 +1,5 @@
 #include "driver_w25q64/driver_w25q64.h"
-#include "driver_w25q64.h"
+
 
 uint8_t WriteBuffer[] = "Hello W25Q64! This is a test from GD32 software SPI.";
 uint8_t ReadBuffer[100] = {0};
