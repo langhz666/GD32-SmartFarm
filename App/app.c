@@ -34,6 +34,23 @@ static SemaphoreHandle_t UART_Mutex = NULL;
 int16_t Num = 0;
 uint16_t Light = 0;
 
+FarmSafeRange_t farmSafeRange = {
+    .minTemperature = 20.0f,
+    .maxTemperature = 30.0f,
+    .minHumidity = 40.0f,
+    .maxHumidity = 60.0f,
+    .minLightIntensity = 0,
+    .maxLightIntensity = 1000,
+    .minSoilMoisture = 30,
+    .maxSoilMoisture = 70,
+    .maxRainGauge = 50
+};
+
+RangeEditIndex_t rangeEditIndex = RANGE_EDIT_TEMPERATURE_MIN;
+RangeEditState_t rangeEditState = RANGE_EDIT_STATE_BROWSING;
+uint8_t isEditingPage = 0;
+DisplayPage_t currentPage = PAGE_HOME;
+
 void LED_Task(void *pvParameters)
 {
     while(1)
@@ -43,118 +60,240 @@ void LED_Task(void *pvParameters)
     }
 }
 
+static void floatToIntDec(float value, int *intPart, int *decPart)
+{
+    *intPart = (int)value;
+    *decPart = (int)((value - *intPart) * 10);
+    if (*decPart < 0) *decPart = -*decPart;
+}
+
+static void renderRangePage1(void)
+{
+    char buffer[32];
+    uint8_t underlineX = 0;
+    uint8_t underlineLength = 0;
+    uint8_t underLineY = 0;
+    static uint8_t flashCount = 0;
+    
+    OLED_ShowString(28, 0, "报警阈值(1/2)", OLED_12X12);
+    
+    int minInt, minDec, maxInt, maxDec;
+    
+    floatToIntDec(farmSafeRange.minTemperature, &minInt, &minDec);
+    floatToIntDec(farmSafeRange.maxTemperature, &maxInt, &maxDec);
+    sprintf(buffer, "%d.%d<温度<%d.%dC  ", minInt, minDec, maxInt, maxDec);
+    OLED_ShowString(0, 16, buffer, OLED_12X12);
+    
+    if (rangeEditIndex == RANGE_EDIT_TEMPERATURE_MIN)
+    {
+        sprintf(buffer, "%d.%d", minInt, minDec);
+        underlineX = 0;
+        underlineLength = strlen(buffer) * 6;
+        underLineY = 32;
+    }
+    else if (rangeEditIndex == RANGE_EDIT_TEMPERATURE_MAX)
+    {
+        sprintf(buffer, "%d.%d", maxInt, maxDec);
+        underlineX = 84;
+        underlineLength = strlen(buffer) * 6;
+        underLineY = 32;
+    }
+    
+    floatToIntDec(farmSafeRange.minHumidity, &minInt, &minDec);
+    floatToIntDec(farmSafeRange.maxHumidity, &maxInt, &maxDec);
+    sprintf(buffer, "%d.%d<湿度<%d.%d%% ", minInt, minDec, maxInt, maxDec);
+    OLED_ShowString(0, 36, buffer, OLED_12X12);
+    
+    if (rangeEditIndex == RANGE_EDIT_HUMIDITY_MIN)
+    {
+        sprintf(buffer, "%d.%d", minInt, minDec);
+        underlineX = 0;
+        underlineLength = strlen(buffer) * 6;
+        underLineY = 52;
+    }
+    else if (rangeEditIndex == RANGE_EDIT_HUMIDITY_MAX)
+    {
+        sprintf(buffer, "%d.%d", maxInt, maxDec);
+        underlineX = 84;
+        underlineLength = strlen(buffer) * 6;
+        underLineY = 52;
+    }
+    
+    sprintf(buffer, "%d<光照<%d    ", farmSafeRange.minLightIntensity, farmSafeRange.maxLightIntensity);
+    OLED_ShowString(0, 52, buffer, OLED_12X12);
+    
+    if (rangeEditIndex == RANGE_EDIT_LIGHT_INTENSITY_MIN)
+    {
+        sprintf(buffer, "%d", farmSafeRange.minLightIntensity);
+        underlineX = 0;
+        underlineLength = strlen(buffer) * 6;
+        underLineY = 68;
+    }
+    else if (rangeEditIndex == RANGE_EDIT_LIGHT_INTENSITY_MAX)
+    {
+        sprintf(buffer, "%d", farmSafeRange.maxLightIntensity);
+        underlineX = 66;
+        underlineLength = strlen(buffer) * 6;
+        underLineY = 68;
+    }
+    
+    if (underlineLength > 0)
+    {
+        if (rangeEditState == RANGE_EDIT_STATE_EDITING)
+        {
+            flashCount = (flashCount + 1) % 10;
+            if (flashCount < 5)
+            {
+                for (uint8_t i = 0; i < underlineLength; i += 6)
+                {
+                    OLED_ShowChar(underlineX + i, underLineY, '_', OLED_6X8);
+                }
+            }
+        }
+        else
+        {
+            for (uint8_t i = 0; i < underlineLength; i += 6)
+            {
+                OLED_ShowChar(underlineX + i, underLineY, '_', OLED_6X8);
+            }
+        }
+    }
+}
+
+static void renderRangePage2(void)
+{
+    char buffer[32];
+    uint8_t underlineX = 0;
+    uint8_t underlineLength = 0;
+    uint8_t underLineY = 0;
+    static uint8_t flashCount = 0;
+    
+    OLED_ShowString(28, 0, "报警阈值(2/2)", OLED_12X12);
+    
+    sprintf(buffer, "%d<土壤<%d%%   ", farmSafeRange.minSoilMoisture, farmSafeRange.maxSoilMoisture);
+    OLED_ShowString(0, 16, buffer, OLED_12X12);
+    
+    if (rangeEditIndex == RANGE_EDIT_SOIL_MOISTURE_MIN)
+    {
+        sprintf(buffer, "%d", farmSafeRange.minSoilMoisture);
+        underlineX = 0;
+        underlineLength = strlen(buffer) * 6;
+        underLineY = 32;
+    }
+    else if (rangeEditIndex == RANGE_EDIT_SOIL_MOISTURE_MAX)
+    {
+        sprintf(buffer, "%d", farmSafeRange.maxSoilMoisture);
+        underlineX = 66;
+        underlineLength = strlen(buffer) * 6;
+        underLineY = 32;
+    }
+    
+    sprintf(buffer, "降雨<%d%%      ", farmSafeRange.maxRainGauge);
+    OLED_ShowString(0, 36, buffer, OLED_12X12);
+    
+    if (rangeEditIndex == RANGE_EDIT_RAIN_GAUGE_MAX)
+    {
+        sprintf(buffer, "%d", farmSafeRange.maxRainGauge);
+        underlineX = 42;
+        underlineLength = strlen(buffer) * 6;
+        underLineY = 52;
+    }
+    
+    if (underlineLength > 0)
+    {
+        if (rangeEditState == RANGE_EDIT_STATE_EDITING)
+        {
+            flashCount = (flashCount + 1) % 10;
+            if (flashCount < 5)
+            {
+                for (uint8_t i = 0; i < underlineLength; i += 6)
+                {
+                    OLED_ShowChar(underlineX + i, underLineY, '_', OLED_6X8);
+                }
+            }
+        }
+        else
+        {
+            for (uint8_t i = 0; i < underlineLength; i += 6)
+            {
+                OLED_ShowChar(underlineX + i, underLineY, '_', OLED_6X8);
+            }
+        }
+    }
+}
+
 void OLED_Task(void *pvParameters)
 {
     char buffer[32];
     SensorData_t sensor_data;
     DisplayPage_t received_page;
-    static DisplayPage_t current_page = PAGE_HOME;
-
-    OLED_Clear();
-    OLED_ShowString(30, 0, "Smart Farm", OLED_8X16);
-    OLED_Update();
-
+    static uint8_t need_clear = 0;
+    
     while(1)
     {
-        if (xQueueReceive(PageEventQueue, &received_page, pdMS_TO_TICKS(10)) == pdTRUE)
+        if (xQueueReceive(PageEventQueue, &received_page, 0) == pdTRUE)
         {
-            current_page = received_page;
-            OLED_Clear();
+            currentPage = received_page;
+            need_clear = 1;
         }
 
-        if (xSemaphoreTake(OLED_Mutex, portMAX_DELAY) == pdTRUE)
+        if (xSemaphoreTake(OLED_Mutex, pdMS_TO_TICKS(5)) == pdTRUE)
         {
-            if (current_page == PAGE_HOME)
+            if (need_clear)
+            {
+                OLED_Clear();
+                need_clear = 0;
+            }
+
+            if (currentPage == PAGE_HOME)
             {
                 if (xQueuePeek(SensorDataQueue, &sensor_data, 0) == pdTRUE)
                 {
-                    OLED_ShowString(30, 0, "Smart Farm", OLED_8X16);
+                    OLED_ShowString(30, 0, "Smart Farm", OLED_12X12);
                     
-                    OLED_ShowString(9, 14, "温度", OLED_8X16);
-                    sprintf(buffer, "%d.%d", (int)sensor_data.temp0, (int)((sensor_data.temp0 - (int)sensor_data.temp0) * 10));
-                    uint8_t len = strlen(buffer);
-                    uint8_t x = 21 - len * 4;
-                    OLED_ShowString(x, 26, buffer, OLED_8X16);
-                    OLED_ShowString(x + len * 4, 26, "C", OLED_8X16);
+                    OLED_ShowString(9, 14, "温度", OLED_12X12);
+                    sprintf(buffer, "%d.%dC   ", (int)sensor_data.temp0, (int)((sensor_data.temp0 - (int)sensor_data.temp0) * 10));
+                    OLED_ShowString(6, 26, buffer, OLED_12X12);
                     
-                    OLED_ShowString(52, 14, "湿度", OLED_8X16);
-                    sprintf(buffer, "%d.%d%%", (int)sensor_data.humi, (int)((sensor_data.humi - (int)sensor_data.humi) * 10));
-                    len = strlen(buffer);
-                    x = 64 - len * 4;
-                    OLED_ShowString(x, 26, buffer, OLED_8X16);
+                    OLED_ShowString(52, 14, "湿度", OLED_12X12);
+                    sprintf(buffer, "%d.%d%%  ", (int)sensor_data.humi, (int)((sensor_data.humi - (int)sensor_data.humi) * 10));
+                    OLED_ShowString(52-3, 26, buffer, OLED_12X12);
                     
-                    OLED_ShowString(95, 14, "光照", OLED_8X16);
-                    sprintf(buffer, "%d", sensor_data.light);
-                    len = strlen(buffer);
-                    x = 107 - len * 4;
-                    OLED_ShowString(x, 26, buffer, OLED_8X16);
+                    OLED_ShowString(95, 14, "光照", OLED_12X12);
+                    sprintf(buffer, "%dls    ", sensor_data.light);
+                    OLED_ShowString(95-3, 26, buffer, OLED_12X12);
                     
-                    OLED_ShowString(9, 41, "土壤", OLED_8X16);
-                    sprintf(buffer, "%d%%", sensor_data.soil);
-                    len = strlen(buffer);
-                    x = 21 - len * 4;
-                    OLED_ShowString(x, 52, buffer, OLED_8X16);
+                    OLED_ShowString(9, 41, "土壤", OLED_12X12);
+                    sprintf(buffer, "%d%%   ", sensor_data.soil);
+                    OLED_ShowString(9+6, 53, buffer, OLED_12X12);
                     
-                    OLED_ShowString(52, 41, "降雨", OLED_8X16);
-                    sprintf(buffer, "%d%%", sensor_data.rain);
-                    len = strlen(buffer);
-                    x = 64 - len * 4;
-                    OLED_ShowString(x, 52, buffer, OLED_8X16);
+                    OLED_ShowString(52, 41, "降雨", OLED_12X12);
+                    sprintf(buffer, "%d%%   ", sensor_data.rain);
+                    OLED_ShowString(58, 53, buffer, OLED_12X12);
                     
-                    OLED_ShowString(95, 41, "水泵", OLED_8X16);
-                    OLED_ShowString(101, 52, "关", OLED_8X16);
+                    OLED_ShowString(95, 41, "水泵", OLED_12X12);
+                    OLED_ShowString(101, 53, "关", OLED_12X12);
                 }
             }
-            else if (current_page == PAGE_RANGE_1)
+            else if (currentPage == PAGE_RANGE_1)
             {
-                OLED_ShowString(25, 0, "报警阈值(1/2)", OLED_8X16);
-                
-                OLED_ShowString(9, 14, "温度", OLED_8X16);
-                sprintf(buffer, "20.0 < 温度 < 30.0");
-                uint8_t len = strlen(buffer);
-                uint8_t x = 64 - len * 4;
-                OLED_ShowString(x, 26, buffer, OLED_8X16);
-                
-                OLED_ShowString(52, 14, "湿度", OLED_8X16);
-                sprintf(buffer, "40.0 < 湿度 < 60.0");
-                len = strlen(buffer);
-                x = 64 - len * 4;
-                OLED_ShowString(x, 26, buffer, OLED_8X16);
-                
-                OLED_ShowString(95, 14, "光照", OLED_8X16);
-                sprintf(buffer, "0 < 光照 < 1000");
-                len = strlen(buffer);
-                x = 107 - len * 4;
-                OLED_ShowString(x, 26, buffer, OLED_8X16);
+                renderRangePage1();
             }
-            else if (current_page == PAGE_RANGE_2)
+            else if (currentPage == PAGE_RANGE_2)
             {
-                OLED_ShowString(25, 0, "报警阈值(2/2)", OLED_8X16);
-                
-                OLED_ShowString(9, 14, "土壤", OLED_8X16);
-                sprintf(buffer, "30 < 土壤 < 70");
-                uint8_t len = strlen(buffer);
-                uint8_t x = 64 - len * 4;
-                OLED_ShowString(x, 26, buffer, OLED_8X16);
-                
-                OLED_ShowString(52, 14, "降雨", OLED_8X16);
-                sprintf(buffer, "0 < 降雨 < 50");
-                len = strlen(buffer);
-                x = 64 - len * 4;
-                OLED_ShowString(x, 26, buffer, OLED_8X16);
+                renderRangePage2();
             }
             
             OLED_Update();
             xSemaphoreGive(OLED_Mutex);
         }
-        vTaskDelay(pdMS_TO_TICKS(200));
+        vTaskDelay(pdMS_TO_TICKS(50));
     }
 }
 
 void Key_Task(void *pvParameters)
 {
     uint8_t key;
-    static DisplayPage_t current_page = PAGE_HOME;
 
     while(1)
     {
@@ -163,28 +302,24 @@ void Key_Task(void *pvParameters)
         {
             if (key == KEY1_PRES)
             {
-                current_page++;
-                if (current_page > PAGE_RANGE_2)
+                currentPage++;
+                if (currentPage > PAGE_RANGE_2)
                 {
-                    current_page = PAGE_HOME;
+                    currentPage = PAGE_HOME;
                 }
-                xQueueSend(PageEventQueue, &current_page, 0);
+                xQueueSend(PageEventQueue, &currentPage, 0);
             }
             else if (key == KEY2_PRES)
             {
-                if (current_page > PAGE_HOME)
+                if (currentPage > PAGE_HOME)
                 {
-                    current_page--;
+                    currentPage--;
                 }
                 else
                 {
-                    current_page = PAGE_RANGE_2;
+                    currentPage = PAGE_RANGE_2;
                 }
-                xQueueSend(PageEventQueue, &current_page, 0);
-            }
-            else
-            {
-                xQueueSend(KeyEventQueue, &key, 0);
+                xQueueSend(PageEventQueue, &currentPage, 0);
             }
         }
         vTaskDelay(pdMS_TO_TICKS(10));
@@ -258,19 +393,191 @@ void Bluetooth_Task(void *pvParameters)
     }
 }
 
+static void handleEditValueChange(int8_t direction)
+{
+    float delta = (direction > 0) ? 0.5f : -0.5f;
+    int16_t intDelta = (direction > 0) ? 5 : -5;
+    
+    switch (rangeEditIndex)
+    {
+    case RANGE_EDIT_TEMPERATURE_MIN:
+        farmSafeRange.minTemperature += delta;
+        if (farmSafeRange.minTemperature < 0) farmSafeRange.minTemperature = 0;
+        if (farmSafeRange.minTemperature >= farmSafeRange.maxTemperature) 
+            farmSafeRange.minTemperature = farmSafeRange.maxTemperature - 0.5f;
+        break;
+    case RANGE_EDIT_TEMPERATURE_MAX:
+        farmSafeRange.maxTemperature += delta;
+        if (farmSafeRange.maxTemperature > 100) farmSafeRange.maxTemperature = 100;
+        if (farmSafeRange.maxTemperature <= farmSafeRange.minTemperature)
+            farmSafeRange.maxTemperature = farmSafeRange.minTemperature + 0.5f;
+        break;
+    case RANGE_EDIT_HUMIDITY_MIN:
+        farmSafeRange.minHumidity += delta;
+        if (farmSafeRange.minHumidity < 0) farmSafeRange.minHumidity = 0;
+        if (farmSafeRange.minHumidity >= farmSafeRange.maxHumidity)
+            farmSafeRange.minHumidity = farmSafeRange.maxHumidity - 0.5f;
+        break;
+    case RANGE_EDIT_HUMIDITY_MAX:
+        farmSafeRange.maxHumidity += delta;
+        if (farmSafeRange.maxHumidity > 100) farmSafeRange.maxHumidity = 100;
+        if (farmSafeRange.maxHumidity <= farmSafeRange.minHumidity)
+            farmSafeRange.maxHumidity = farmSafeRange.minHumidity + 0.5f;
+        break;
+    case RANGE_EDIT_LIGHT_INTENSITY_MIN:
+        if (intDelta < 0 && farmSafeRange.minLightIntensity < (uint16_t)(-intDelta))
+        {
+            farmSafeRange.minLightIntensity = 0;
+        }
+        else
+        {
+            farmSafeRange.minLightIntensity += intDelta;
+        }
+        if (farmSafeRange.minLightIntensity >= farmSafeRange.maxLightIntensity)
+            farmSafeRange.minLightIntensity = farmSafeRange.maxLightIntensity - 5;
+        break;
+    case RANGE_EDIT_LIGHT_INTENSITY_MAX:
+        farmSafeRange.maxLightIntensity += intDelta;
+        if (farmSafeRange.maxLightIntensity > 65535) farmSafeRange.maxLightIntensity = 65535;
+        if (farmSafeRange.maxLightIntensity <= farmSafeRange.minLightIntensity)
+            farmSafeRange.maxLightIntensity = farmSafeRange.minLightIntensity + 5;
+        break;
+    case RANGE_EDIT_SOIL_MOISTURE_MIN:
+        if (direction < 0 && farmSafeRange.minSoilMoisture == 0)
+        {
+        }
+        else
+        {
+            farmSafeRange.minSoilMoisture += (direction > 0) ? 1 : -1;
+        }
+        if (farmSafeRange.minSoilMoisture >= farmSafeRange.maxSoilMoisture)
+            farmSafeRange.minSoilMoisture = farmSafeRange.maxSoilMoisture - 1;
+        break;
+    case RANGE_EDIT_SOIL_MOISTURE_MAX:
+        farmSafeRange.maxSoilMoisture += (direction > 0) ? 1 : -1;
+        if (farmSafeRange.maxSoilMoisture > 100) farmSafeRange.maxSoilMoisture = 100;
+        if (farmSafeRange.maxSoilMoisture <= farmSafeRange.minSoilMoisture)
+            farmSafeRange.maxSoilMoisture = farmSafeRange.minSoilMoisture + 1;
+        break;
+    case RANGE_EDIT_RAIN_GAUGE_MAX:
+        if (direction < 0 && farmSafeRange.maxRainGauge == 0)
+        {
+        }
+        else
+        {
+            farmSafeRange.maxRainGauge += (direction > 0) ? 1 : -1;
+        }
+        if (farmSafeRange.maxRainGauge > 100) farmSafeRange.maxRainGauge = 100;
+        break;
+    default:
+        break;
+    }
+}
+
 void Encoder_Task(void *pvParameters)
 {
     int8_t encoder_value;
+    uint8_t encoder_key;
+    static DisplayPage_t last_page = PAGE_HOME;
 
     while(1)
     {
         encoder_value = Encoder_Get();
-        if (encoder_value != 0)
+        encoder_key = Encoder_Key_Scan(0);
+        
+        if (currentPage != last_page)
         {
-            Num += encoder_value;
-            if (Num > 9999) Num = 9999;
-            if (Num < -999) Num = -999;
+            last_page = currentPage;
+            if (currentPage == PAGE_RANGE_1)
+            {
+                isEditingPage = 1;
+                rangeEditIndex = RANGE_EDIT_TEMPERATURE_MIN;
+                rangeEditState = RANGE_EDIT_STATE_BROWSING;
+            }
+            else if (currentPage == PAGE_RANGE_2)
+            {
+                isEditingPage = 1;
+                rangeEditIndex = RANGE_EDIT_SOIL_MOISTURE_MIN;
+                rangeEditState = RANGE_EDIT_STATE_BROWSING;
+            }
+            else
+            {
+                isEditingPage = 0;
+            }
         }
+        
+        if (isEditingPage)
+        {
+            if (encoder_key == ENCODER_KEY_PRES)
+            {
+                if (rangeEditState == RANGE_EDIT_STATE_BROWSING)
+                {
+                    rangeEditState = RANGE_EDIT_STATE_EDITING;
+                }
+                else
+                {
+                    rangeEditState = RANGE_EDIT_STATE_BROWSING;
+                }
+            }
+            
+            if (encoder_value != 0)
+            {
+                if (rangeEditState == RANGE_EDIT_STATE_BROWSING)
+                {
+                    if (encoder_value > 0)
+                    {
+                        if (rangeEditIndex < RANGE_EDIT_COUNT - 1)
+                        {
+                            rangeEditIndex = (RangeEditIndex_t)(rangeEditIndex + 1);
+                        }
+                        else
+                        {
+                            rangeEditIndex = RANGE_EDIT_TEMPERATURE_MIN;
+                        }
+                    }
+                    else
+                    {
+                        if (rangeEditIndex > 0)
+                        {
+                            rangeEditIndex = (RangeEditIndex_t)(rangeEditIndex - 1);
+                        }
+                        else
+                        {
+                            rangeEditIndex = (RangeEditIndex_t)(RANGE_EDIT_COUNT - 1);
+                        }
+                    }
+                    
+                    if ((rangeEditIndex <= RANGE_EDIT_LIGHT_INTENSITY_MAX && currentPage == PAGE_RANGE_2) ||
+                        (rangeEditIndex > RANGE_EDIT_LIGHT_INTENSITY_MAX && currentPage == PAGE_RANGE_1))
+                    {
+                        DisplayPage_t new_page;
+                        if (rangeEditIndex <= RANGE_EDIT_LIGHT_INTENSITY_MAX)
+                        {
+                            new_page = PAGE_RANGE_1;
+                        }
+                        else
+                        {
+                            new_page = PAGE_RANGE_2;
+                        }
+                        xQueueOverwrite(PageEventQueue, &new_page);
+                    }
+                }
+                else
+                {
+                    handleEditValueChange(encoder_value);
+                }
+            }
+        }
+        else
+        {
+            if (encoder_value != 0)
+            {
+                Num += encoder_value;
+                if (Num > 9999) Num = 9999;
+                if (Num < -999) Num = -999;
+            }
+        }
+        
         vTaskDelay(pdMS_TO_TICKS(10));
     }
 }

@@ -1,3 +1,11 @@
+/*
+ * @Author: langhz666 3204498297@qq.com
+ * @Date: 2026-03-12 14:31:21
+ * @LastEditors: langhz666 3204498297@qq.com
+ * @LastEditTime: 2026-03-14 20:49:00
+ * @FilePath: \GD32F103C8T6\Driver\driver_key\driver_key.c
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 #include "driver_key/driver_key.h"
 #include "delay.h"
 #include <stdio.h>
@@ -20,14 +28,15 @@ uint8_t Key_Scan(uint8_t mode)
     static uint8_t key_up = 1; 
 
     uint8_t key_val = KEY_NONE;
+    uint8_t key1_state = gpio_input_bit_get(KEY_PORT, KEY1_PIN);
+    uint8_t key2_state = gpio_input_bit_get(KEY_PORT, KEY2_PIN);
 
     if (mode == 1) 
     {
         key_up = 1;
     }
 
-    if (key_up && (gpio_input_bit_get(KEY_PORT, KEY1_PIN) == RESET || 
-                   gpio_input_bit_get(KEY_PORT, KEY2_PIN) == RESET))
+    if (key_up && (key1_state == RESET || key2_state == RESET))
     {
         DelayNms(10);
         
@@ -36,8 +45,7 @@ uint8_t Key_Scan(uint8_t mode)
         if (gpio_input_bit_get(KEY_PORT, KEY1_PIN) == RESET) key_val = KEY1_PRES;
         if (gpio_input_bit_get(KEY_PORT, KEY2_PIN) == RESET) key_val = KEY2_PRES;
     }
-    else if (gpio_input_bit_get(KEY_PORT, KEY1_PIN) == SET && 
-             gpio_input_bit_get(KEY_PORT, KEY2_PIN) == SET)
+    else if (key1_state == SET && key2_state == SET)
     {
         key_up = 1;
     }
