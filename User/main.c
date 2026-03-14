@@ -41,5 +41,6 @@ int main(void)
 
     vTaskStartScheduler();
 
+    printf("ERROR: Scheduler failed to start!\r\n");
     while(1);
 }

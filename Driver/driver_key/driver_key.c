@@ -17,10 +17,6 @@ void Key_Init(void)
     gpio_init(KEY_PORT, GPIO_MODE_IPU, GPIO_OSPEED_50MHZ, KEY1_PIN | KEY2_PIN );
 
     DelayNms(10);
-    
-    printf("Key_Init (IPU): KEY1=%d KEY2=%d \r\n", 
-        gpio_input_bit_get(KEY_PORT, KEY1_PIN),
-        gpio_input_bit_get(KEY_PORT, KEY2_PIN));
 }
 
 uint8_t Key_Scan(uint8_t mode)

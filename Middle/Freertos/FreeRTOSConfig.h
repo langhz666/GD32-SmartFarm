@@ -8,7 +8,7 @@
 #define configTICK_RATE_HZ                      1000
 #define configMAX_PRIORITIES                    5
 #define configMINIMAL_STACK_SIZE                128
-#define configTOTAL_HEAP_SIZE                   6144  // 6KB，为GD32F103C8T6优化
+#define configTOTAL_HEAP_SIZE                   10240  // 10KB，为GD32F103C8T6优化
 #define configMAX_TASK_NAME_LEN                 16
 #define configUSE_16_BIT_TICKS                  0
 #define configIDLE_SHOULD_YIELD                 1

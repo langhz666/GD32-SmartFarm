@@ -20,6 +20,10 @@
 void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
 {
     taskDISABLE_INTERRUPTS();
+    
+    gpio_bit_write(LED0_GPIO_PORT, LED0_GPIO_PIN, SET);
+    gpio_bit_write(LED1_GPIO_PORT, LED1_GPIO_PIN, SET);
+    
     for(;;)
     {
     }
@@ -270,15 +274,18 @@ void Key_Task(void *pvParameters)
             }
             else if (key == KEY2_PRES)
             {
-                if (currentPage > PAGE_HOME)
+                if (currentPage == PAGE_RANGE)
                 {
-                    currentPage--;
+                    if (rangeEditState == RANGE_EDIT_STATE_BROWSING)
+                    {
+                        rangeEditState = RANGE_EDIT_STATE_EDITING;
+                    }
+                    else
+                    {
+                        rangeEditState = RANGE_EDIT_STATE_BROWSING;
+                    }
+                    oled_dirty = 1;
                 }
-                else
-                {
-                    currentPage = PAGE_RANGE;
-                }
-                xQueueSend(PageEventQueue, &currentPage, 0);
             }
         }
         vTaskDelay(pdMS_TO_TICKS(10));
@@ -341,9 +348,15 @@ void Bluetooth_Task(void *pvParameters)
             {
                 if (xSemaphoreTake(UART_Mutex, portMAX_DELAY) == pdTRUE)
                 {
-                    printf("Temp0: %.1fC, Temp1: %.1fC, Humi: %.1f%%, Press: %.0fPa, Light: %d\r\n",
-                           sensor_data.temp0, sensor_data.temp1, sensor_data.humi,
-                           sensor_data.press, sensor_data.light);
+                    int t0_int, t0_dec, t1_int, t1_dec, h_int, h_dec;
+                    
+                    floatToIntDec(sensor_data.temp0, &t0_int, &t0_dec);
+                    floatToIntDec(sensor_data.temp1, &t1_int, &t1_dec);
+                    floatToIntDec(sensor_data.humi, &h_int, &h_dec);
+                    
+                    printf("Temp0: %d.%dC, Temp1: %d.%dC, Humi: %d.%d%%, Press: %dPa, Light: %d\r\n",
+                           t0_int, t0_dec, t1_int, t1_dec, h_int, h_dec,
+                           (int)sensor_data.press, sensor_data.light);
                     xSemaphoreGive(UART_Mutex);
                 }
             }
@@ -438,13 +451,11 @@ static void handleEditValueChange(int8_t direction)
 void Encoder_Task(void *pvParameters)
 {
     int8_t encoder_value;
-    uint8_t encoder_key;
     static DisplayPage_t last_page = PAGE_HOME;
 
     while(1)
     {
         encoder_value = Encoder_Get();
-        encoder_key = Encoder_Key_Scan(0);
         
         if (currentPage != last_page)
         {
@@ -465,19 +476,6 @@ void Encoder_Task(void *pvParameters)
         
         if (isEditingPage)
         {
-            if (encoder_key == ENCODER_KEY_PRES)
-            {
-                oled_dirty = 1; // 状态切换立刻触发屏幕重绘
-                if (rangeEditState == RANGE_EDIT_STATE_BROWSING)
-                {
-                    rangeEditState = RANGE_EDIT_STATE_EDITING;
-                }
-                else
-                {
-                    rangeEditState = RANGE_EDIT_STATE_BROWSING;
-                }
-            }
-            
             if (encoder_value != 0)
             {
                 oled_dirty = 1; // 数值发生改变时立刻触发屏幕重绘
