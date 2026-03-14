@@ -74,12 +74,6 @@ typedef enum {
     RANGE_EDIT_STATE_EDITING
 } RangeEditState_t;
 
-extern FarmSafeRange_t farmSafeRange;
-extern RangeEditIndex_t rangeEditIndex;
-extern RangeEditState_t rangeEditState;
-extern uint8_t isEditingPage;
-extern DisplayPage_t currentPage;
-
 void App_CreateTasks(void);
 void App_CreateQueues(void);
 void App_CreateSemaphores(void);

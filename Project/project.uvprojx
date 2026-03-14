@@ -389,6 +389,41 @@
               <FileType>1</FileType>
               <FilePath>..\App\app.c</FilePath>
             </File>
+            <File>
+              <FileName>app_utils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\App\app_utils.c</FilePath>
+            </File>
+            <File>
+              <FileName>task_bluetooth.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\App\task_bluetooth.c</FilePath>
+            </File>
+            <File>
+              <FileName>task_encoder.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\App\task_encoder.c</FilePath>
+            </File>
+            <File>
+              <FileName>task_key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\App\task_key.c</FilePath>
+            </File>
+            <File>
+              <FileName>task_led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\App\task_led.c</FilePath>
+            </File>
+            <File>
+              <FileName>task_oled.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\App\task_oled.c</FilePath>
+            </File>
+            <File>
+              <FileName>task_sensor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\App\task_sensor.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
