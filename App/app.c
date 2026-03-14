@@ -33,6 +33,7 @@ static SemaphoreHandle_t UART_Mutex = NULL;
 
 int16_t Num = 0;
 uint16_t Light = 0;
+uint8_t oled_dirty = 1; // 【新增】全局脏标记，1表示需要刷新屏幕，0表示画面无变化无需刷新
 
 FarmSafeRange_t farmSafeRange = {
     .minTemperature = 20.0f,
@@ -67,159 +68,94 @@ static void floatToIntDec(float value, int *intPart, int *decPart)
     if (*decPart < 0) *decPart = -*decPart;
 }
 
-static void renderRangePage1(void)
+static uint8_t getIntLen(int val)
 {
-    char buffer[32];
-    uint8_t underlineX = 0;
-    uint8_t underlineLength = 0;
-    uint8_t underLineY = 0;
-    static uint8_t flashCount = 0;
-    
-    OLED_ShowString(28, 0, "报警阈值(1/2)", OLED_12X12);
-    
-    int minInt, minDec, maxInt, maxDec;
-    
-    floatToIntDec(farmSafeRange.minTemperature, &minInt, &minDec);
-    floatToIntDec(farmSafeRange.maxTemperature, &maxInt, &maxDec);
-    sprintf(buffer, "%d.%d<温度<%d.%dC  ", minInt, minDec, maxInt, maxDec);
-    OLED_ShowString(0, 16, buffer, OLED_12X12);
-    
-    if (rangeEditIndex == RANGE_EDIT_TEMPERATURE_MIN)
+    uint8_t len = 0;
+    if (val < 0) { len++; val = -val; }
+    if (val == 0) return 1;
+    while (val > 0) { len++; val /= 10; }
+    return len;
+}
+
+// 【优化】通过系统心跳直接计算闪烁状态，不再依赖外部传参，彻底解决状态不同步问题
+static void drawUnderline(uint8_t x, uint8_t y, uint8_t len, uint8_t isActive)
+{
+    if (isActive)
     {
-        sprintf(buffer, "%d.%d", minInt, minDec);
-        underlineX = 0;
-        underlineLength = strlen(buffer) * 6;
-        underLineY = 32;
-    }
-    else if (rangeEditIndex == RANGE_EDIT_TEMPERATURE_MAX)
-    {
-        sprintf(buffer, "%d.%d", maxInt, maxDec);
-        underlineX = 84;
-        underlineLength = strlen(buffer) * 6;
-        underLineY = 32;
-    }
-    
-    floatToIntDec(farmSafeRange.minHumidity, &minInt, &minDec);
-    floatToIntDec(farmSafeRange.maxHumidity, &maxInt, &maxDec);
-    sprintf(buffer, "%d.%d<湿度<%d.%d%% ", minInt, minDec, maxInt, maxDec);
-    OLED_ShowString(0, 36, buffer, OLED_12X12);
-    
-    if (rangeEditIndex == RANGE_EDIT_HUMIDITY_MIN)
-    {
-        sprintf(buffer, "%d.%d", minInt, minDec);
-        underlineX = 0;
-        underlineLength = strlen(buffer) * 6;
-        underLineY = 52;
-    }
-    else if (rangeEditIndex == RANGE_EDIT_HUMIDITY_MAX)
-    {
-        sprintf(buffer, "%d.%d", maxInt, maxDec);
-        underlineX = 84;
-        underlineLength = strlen(buffer) * 6;
-        underLineY = 52;
-    }
-    
-    sprintf(buffer, "%d<光照<%d    ", farmSafeRange.minLightIntensity, farmSafeRange.maxLightIntensity);
-    OLED_ShowString(0, 52, buffer, OLED_12X12);
-    
-    if (rangeEditIndex == RANGE_EDIT_LIGHT_INTENSITY_MIN)
-    {
-        sprintf(buffer, "%d", farmSafeRange.minLightIntensity);
-        underlineX = 0;
-        underlineLength = strlen(buffer) * 6;
-        underLineY = 68;
-    }
-    else if (rangeEditIndex == RANGE_EDIT_LIGHT_INTENSITY_MAX)
-    {
-        sprintf(buffer, "%d", farmSafeRange.maxLightIntensity);
-        underlineX = 66;
-        underlineLength = strlen(buffer) * 6;
-        underLineY = 68;
-    }
-    
-    if (underlineLength > 0)
-    {
-        if (rangeEditState == RANGE_EDIT_STATE_EDITING)
+        // 每 250ms 翻转一次状态，实现完美的闪烁效果
+        uint8_t blink_on = ((xTaskGetTickCount() / 250) % 2 == 0); 
+        if (rangeEditState == RANGE_EDIT_STATE_BROWSING || (rangeEditState == RANGE_EDIT_STATE_EDITING && blink_on))
         {
-            flashCount = (flashCount + 1) % 10;
-            if (flashCount < 5)
+            for (uint8_t i = 0; i < len; i++)
             {
-                for (uint8_t i = 0; i < underlineLength; i += 6)
-                {
-                    OLED_ShowChar(underlineX + i, underLineY, '_', OLED_6X8);
-                }
-            }
-        }
-        else
-        {
-            for (uint8_t i = 0; i < underlineLength; i += 6)
-            {
-                OLED_ShowChar(underlineX + i, underLineY, '_', OLED_6X8);
+                OLED_DrawPoint(x + i, y);
             }
         }
     }
 }
 
+static void renderRangePage1(void)
+{
+    char buffer[32];
+    int minInt, minDec, maxInt, maxDec;
+    uint8_t minLen, maxLen;
+
+    OLED_ShowString(28, 0, "报警阈值(1/2)", OLED_12X12);
+
+    floatToIntDec(farmSafeRange.minTemperature, &minInt, &minDec);
+    floatToIntDec(farmSafeRange.maxTemperature, &maxInt, &maxDec);
+    minLen = getIntLen(minInt) + 2;
+    maxLen = getIntLen(maxInt) + 2;
+
+    sprintf(buffer, "%d.%d<温度<%d.%dC  ", minInt, minDec, maxInt, maxDec);
+    OLED_ShowString(0, 15, buffer, OLED_12X12);
+
+    drawUnderline(0, 28, minLen * 6, (rangeEditIndex == RANGE_EDIT_TEMPERATURE_MIN));
+    drawUnderline(minLen * 6 + 36, 28, maxLen * 6, (rangeEditIndex == RANGE_EDIT_TEMPERATURE_MAX));
+
+    floatToIntDec(farmSafeRange.minHumidity, &minInt, &minDec);
+    floatToIntDec(farmSafeRange.maxHumidity, &maxInt, &maxDec);
+    minLen = getIntLen(minInt) + 2;
+    maxLen = getIntLen(maxInt) + 2;
+
+    sprintf(buffer, "%d.%d<湿度<%d.%d%% ", minInt, minDec, maxInt, maxDec);
+    OLED_ShowString(0, 30, buffer, OLED_12X12);
+
+    drawUnderline(0, 43, minLen * 6, (rangeEditIndex == RANGE_EDIT_HUMIDITY_MIN));
+    drawUnderline(minLen * 6 + 36, 43, maxLen * 6, (rangeEditIndex == RANGE_EDIT_HUMIDITY_MAX));
+
+    minLen = getIntLen(farmSafeRange.minLightIntensity);
+    maxLen = getIntLen(farmSafeRange.maxLightIntensity);
+
+    sprintf(buffer, "%d<光照<%d    ", farmSafeRange.minLightIntensity, farmSafeRange.maxLightIntensity);
+    OLED_ShowString(0, 45, buffer, OLED_12X12);
+
+    drawUnderline(0, 58, minLen * 6, (rangeEditIndex == RANGE_EDIT_LIGHT_INTENSITY_MIN));
+    drawUnderline(minLen * 6 + 36, 58, maxLen * 6, (rangeEditIndex == RANGE_EDIT_LIGHT_INTENSITY_MAX));
+}
+
 static void renderRangePage2(void)
 {
     char buffer[32];
-    uint8_t underlineX = 0;
-    uint8_t underlineLength = 0;
-    uint8_t underLineY = 0;
-    static uint8_t flashCount = 0;
-    
+    uint8_t minLen, maxLen;
+
     OLED_ShowString(28, 0, "报警阈值(2/2)", OLED_12X12);
-    
+
+    minLen = getIntLen(farmSafeRange.minSoilMoisture);
+    maxLen = getIntLen(farmSafeRange.maxSoilMoisture);
+
     sprintf(buffer, "%d<土壤<%d%%   ", farmSafeRange.minSoilMoisture, farmSafeRange.maxSoilMoisture);
-    OLED_ShowString(0, 16, buffer, OLED_12X12);
-    
-    if (rangeEditIndex == RANGE_EDIT_SOIL_MOISTURE_MIN)
-    {
-        sprintf(buffer, "%d", farmSafeRange.minSoilMoisture);
-        underlineX = 0;
-        underlineLength = strlen(buffer) * 6;
-        underLineY = 32;
-    }
-    else if (rangeEditIndex == RANGE_EDIT_SOIL_MOISTURE_MAX)
-    {
-        sprintf(buffer, "%d", farmSafeRange.maxSoilMoisture);
-        underlineX = 66;
-        underlineLength = strlen(buffer) * 6;
-        underLineY = 32;
-    }
-    
+    OLED_ShowString(0, 15, buffer, OLED_12X12);
+
+    drawUnderline(0, 28, minLen * 6, (rangeEditIndex == RANGE_EDIT_SOIL_MOISTURE_MIN));
+    drawUnderline(minLen * 6 + 36, 28, maxLen * 6, (rangeEditIndex == RANGE_EDIT_SOIL_MOISTURE_MAX));
+
+    maxLen = getIntLen(farmSafeRange.maxRainGauge);
+
     sprintf(buffer, "降雨<%d%%      ", farmSafeRange.maxRainGauge);
-    OLED_ShowString(0, 36, buffer, OLED_12X12);
-    
-    if (rangeEditIndex == RANGE_EDIT_RAIN_GAUGE_MAX)
-    {
-        sprintf(buffer, "%d", farmSafeRange.maxRainGauge);
-        underlineX = 42;
-        underlineLength = strlen(buffer) * 6;
-        underLineY = 52;
-    }
-    
-    if (underlineLength > 0)
-    {
-        if (rangeEditState == RANGE_EDIT_STATE_EDITING)
-        {
-            flashCount = (flashCount + 1) % 10;
-            if (flashCount < 5)
-            {
-                for (uint8_t i = 0; i < underlineLength; i += 6)
-                {
-                    OLED_ShowChar(underlineX + i, underLineY, '_', OLED_6X8);
-                }
-            }
-        }
-        else
-        {
-            for (uint8_t i = 0; i < underlineLength; i += 6)
-            {
-                OLED_ShowChar(underlineX + i, underLineY, '_', OLED_6X8);
-            }
-        }
-    }
+    OLED_ShowString(0, 30, buffer, OLED_12X12);
+
+    drawUnderline(30, 43, maxLen * 6, (rangeEditIndex == RANGE_EDIT_RAIN_GAUGE_MAX));
 }
 
 void OLED_Task(void *pvParameters)
@@ -228,6 +164,7 @@ void OLED_Task(void *pvParameters)
     SensorData_t sensor_data;
     DisplayPage_t received_page;
     static uint8_t need_clear = 0;
+    static TickType_t last_blink_tick = 0;
     
     while(1)
     {
@@ -235,58 +172,79 @@ void OLED_Task(void *pvParameters)
         {
             currentPage = received_page;
             need_clear = 1;
+            oled_dirty = 1; // 页面切换，强制重绘
         }
 
-        if (xSemaphoreTake(OLED_Mutex, pdMS_TO_TICKS(5)) == pdTRUE)
+        // 【优化】仅在编辑模式下，为了让下划线闪烁，每250ms主动触发一次局部重绘
+        if (currentPage == PAGE_RANGE && rangeEditState == RANGE_EDIT_STATE_EDITING)
         {
-            if (need_clear)
+            if (xTaskGetTickCount() - last_blink_tick >= pdMS_TO_TICKS(250))
             {
-                OLED_Clear();
-                need_clear = 0;
+                oled_dirty = 1;
+                last_blink_tick = xTaskGetTickCount();
             }
-
-            if (currentPage == PAGE_HOME)
-            {
-                if (xQueuePeek(SensorDataQueue, &sensor_data, 0) == pdTRUE)
-                {
-                    OLED_ShowString(30, 0, "Smart Farm", OLED_12X12);
-                    
-                    OLED_ShowString(9, 14, "温度", OLED_12X12);
-                    sprintf(buffer, "%d.%dC   ", (int)sensor_data.temp0, (int)((sensor_data.temp0 - (int)sensor_data.temp0) * 10));
-                    OLED_ShowString(6, 26, buffer, OLED_12X12);
-                    
-                    OLED_ShowString(52, 14, "湿度", OLED_12X12);
-                    sprintf(buffer, "%d.%d%%  ", (int)sensor_data.humi, (int)((sensor_data.humi - (int)sensor_data.humi) * 10));
-                    OLED_ShowString(52-3, 26, buffer, OLED_12X12);
-                    
-                    OLED_ShowString(95, 14, "光照", OLED_12X12);
-                    sprintf(buffer, "%dls    ", sensor_data.light);
-                    OLED_ShowString(95-3, 26, buffer, OLED_12X12);
-                    
-                    OLED_ShowString(9, 41, "土壤", OLED_12X12);
-                    sprintf(buffer, "%d%%   ", sensor_data.soil);
-                    OLED_ShowString(9+6, 53, buffer, OLED_12X12);
-                    
-                    OLED_ShowString(52, 41, "降雨", OLED_12X12);
-                    sprintf(buffer, "%d%%   ", sensor_data.rain);
-                    OLED_ShowString(58, 53, buffer, OLED_12X12);
-                    
-                    OLED_ShowString(95, 41, "水泵", OLED_12X12);
-                    OLED_ShowString(101, 53, "关", OLED_12X12);
-                }
-            }
-            else if (currentPage == PAGE_RANGE_1)
-            {
-                renderRangePage1();
-            }
-            else if (currentPage == PAGE_RANGE_2)
-            {
-                renderRangePage2();
-            }
-            
-            OLED_Update();
-            xSemaphoreGive(OLED_Mutex);
         }
+
+        // 【核心机制】只有在需要刷新时（收到数据、旋转编码器、光标闪烁），才调用底层I2C！
+        if (oled_dirty)
+        {
+            if (xSemaphoreTake(OLED_Mutex, pdMS_TO_TICKS(5)) == pdTRUE)
+            {
+                // 如果是切换了页面，或者是处于编辑界面（彻底消除重影），就整体清屏
+                if (need_clear || currentPage == PAGE_RANGE)
+                {
+                    OLED_Clear();
+                    need_clear = 0;
+                }
+
+                if (currentPage == PAGE_RANGE)
+                {
+                    if (rangeEditIndex <= RANGE_EDIT_LIGHT_INTENSITY_MAX)
+                    {
+                        renderRangePage1();
+                    }
+                    else
+                    {
+                        renderRangePage2();
+                    }
+                }
+                else if (currentPage == PAGE_HOME)
+                {
+                    if (xQueuePeek(SensorDataQueue, &sensor_data, 0) == pdTRUE)
+                    {
+                        OLED_ShowString(30, 0, "Smart Farm", OLED_12X12);
+                        
+                        OLED_ShowString(9, 14, "温度", OLED_12X12);
+                        sprintf(buffer, "%d.%dC   ", (int)sensor_data.temp0, (int)((sensor_data.temp0 - (int)sensor_data.temp0) * 10));
+                        OLED_ShowString(6, 26, buffer, OLED_12X12);
+                        
+                        OLED_ShowString(52, 14, "湿度", OLED_12X12);
+                        sprintf(buffer, "%d.%d%%  ", (int)sensor_data.humi, (int)((sensor_data.humi - (int)sensor_data.humi) * 10));
+                        OLED_ShowString(52-3, 26, buffer, OLED_12X12);
+                        
+                        OLED_ShowString(95, 14, "光照", OLED_12X12);
+                        sprintf(buffer, "%dls    ", sensor_data.light);
+                        OLED_ShowString(95-3, 26, buffer, OLED_12X12);
+                        
+                        OLED_ShowString(9, 41, "土壤", OLED_12X12);
+                        sprintf(buffer, "%d%%   ", sensor_data.soil);
+                        OLED_ShowString(9+6, 53, buffer, OLED_12X12);
+                        
+                        OLED_ShowString(52, 41, "降雨", OLED_12X12);
+                        sprintf(buffer, "%d%%   ", sensor_data.rain);
+                        OLED_ShowString(58, 53, buffer, OLED_12X12);
+                        
+                        OLED_ShowString(95, 41, "水泵", OLED_12X12);
+                        OLED_ShowString(101, 53, "关", OLED_12X12);
+                    }
+                }
+                
+                OLED_Update();
+                xSemaphoreGive(OLED_Mutex);
+            }
+            oled_dirty = 0; // 刷新完毕，清除脏标记
+        }
+        
         vTaskDelay(pdMS_TO_TICKS(50));
     }
 }
@@ -300,10 +258,11 @@ void Key_Task(void *pvParameters)
         key = Key_Scan(0);
         if (key)
         {
+            oled_dirty = 1; // 发生按键事件，唤醒屏幕重绘
             if (key == KEY1_PRES)
             {
                 currentPage++;
-                if (currentPage > PAGE_RANGE_2)
+                if (currentPage > PAGE_RANGE)
                 {
                     currentPage = PAGE_HOME;
                 }
@@ -317,7 +276,7 @@ void Key_Task(void *pvParameters)
                 }
                 else
                 {
-                    currentPage = PAGE_RANGE_2;
+                    currentPage = PAGE_RANGE;
                 }
                 xQueueSend(PageEventQueue, &currentPage, 0);
             }
@@ -339,6 +298,8 @@ void Sensor_Task(void *pvParameters)
         data.rain = Get_Rain_size();
 
         xQueueOverwrite(SensorDataQueue, &data);
+        oled_dirty = 1; // 传感器数据有更新，唤醒屏幕重绘
+        
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
@@ -488,16 +449,12 @@ void Encoder_Task(void *pvParameters)
         if (currentPage != last_page)
         {
             last_page = currentPage;
-            if (currentPage == PAGE_RANGE_1)
+            oled_dirty = 1; // 监测到跨页情况重绘屏幕
+            
+            if (currentPage == PAGE_RANGE)
             {
                 isEditingPage = 1;
                 rangeEditIndex = RANGE_EDIT_TEMPERATURE_MIN;
-                rangeEditState = RANGE_EDIT_STATE_BROWSING;
-            }
-            else if (currentPage == PAGE_RANGE_2)
-            {
-                isEditingPage = 1;
-                rangeEditIndex = RANGE_EDIT_SOIL_MOISTURE_MIN;
                 rangeEditState = RANGE_EDIT_STATE_BROWSING;
             }
             else
@@ -510,6 +467,7 @@ void Encoder_Task(void *pvParameters)
         {
             if (encoder_key == ENCODER_KEY_PRES)
             {
+                oled_dirty = 1; // 状态切换立刻触发屏幕重绘
                 if (rangeEditState == RANGE_EDIT_STATE_BROWSING)
                 {
                     rangeEditState = RANGE_EDIT_STATE_EDITING;
@@ -522,6 +480,7 @@ void Encoder_Task(void *pvParameters)
             
             if (encoder_value != 0)
             {
+                oled_dirty = 1; // 数值发生改变时立刻触发屏幕重绘
                 if (rangeEditState == RANGE_EDIT_STATE_BROWSING)
                 {
                     if (encoder_value > 0)
@@ -546,21 +505,6 @@ void Encoder_Task(void *pvParameters)
                             rangeEditIndex = (RangeEditIndex_t)(RANGE_EDIT_COUNT - 1);
                         }
                     }
-                    
-                    if ((rangeEditIndex <= RANGE_EDIT_LIGHT_INTENSITY_MAX && currentPage == PAGE_RANGE_2) ||
-                        (rangeEditIndex > RANGE_EDIT_LIGHT_INTENSITY_MAX && currentPage == PAGE_RANGE_1))
-                    {
-                        DisplayPage_t new_page;
-                        if (rangeEditIndex <= RANGE_EDIT_LIGHT_INTENSITY_MAX)
-                        {
-                            new_page = PAGE_RANGE_1;
-                        }
-                        else
-                        {
-                            new_page = PAGE_RANGE_2;
-                        }
-                        xQueueOverwrite(PageEventQueue, &new_page);
-                    }
                 }
                 else
                 {
@@ -572,6 +516,7 @@ void Encoder_Task(void *pvParameters)
         {
             if (encoder_value != 0)
             {
+                oled_dirty = 1; 
                 Num += encoder_value;
                 if (Num > 9999) Num = 9999;
                 if (Num < -999) Num = -999;

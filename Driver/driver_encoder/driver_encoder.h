@@ -3,12 +3,13 @@
 
 #include "gd32f10x.h"
 
-#define ENCODER_KEY_RCU      RCU_GPIOB
-#define ENCODER_KEY_PORT     GPIOB
-#define ENCODER_KEY_PIN      GPIO_PIN_2
+#define ENCODER_KEY_RCU      RCU_GPIOA
 
-#define ENCODER_KEY_NONE     0
-#define ENCODER_KEY_PRES     1
+#define ENCODER_KEY_PORT  GPIOA
+#define ENCODER_KEY_PIN   GPIO_PIN_7
+
+#define ENCODER_KEY_PRES  1    // 确保有这个按键按下的返回值定义
+#define ENCODER_KEY_NONE  0    // 确保有按键未按下的返回值定义
 
 void Encoder_Init(void);
 int16_t Encoder_Get(void);

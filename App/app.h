@@ -41,8 +41,7 @@ typedef struct {
 
 typedef enum {
     PAGE_HOME = 0,
-    PAGE_RANGE_1 = 1,
-    PAGE_RANGE_2 = 2
+    PAGE_RANGE = 1
 } DisplayPage_t;
 
 typedef struct {
