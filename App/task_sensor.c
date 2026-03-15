@@ -116,10 +116,13 @@ void Sensor_Task(void *pvParameters)
         
         if (alarmFlag)
         {
-            Buzzer_On();
-            DelayNms(100);
-            Buzzer_Off();
-            DelayNms(100);
+            for (uint8_t i = 0; i < 3; i++)
+            {
+                Buzzer_On();
+                DelayNms(150);
+                Buzzer_Off();
+                DelayNms(100);
+            }
         }
         
         vTaskDelay(pdMS_TO_TICKS(1000));
