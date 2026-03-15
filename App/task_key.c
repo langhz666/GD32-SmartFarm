@@ -1,5 +1,7 @@
 #include "app_shared.h"
 #include "driver_key/driver_key.h"
+#include "driver_buzzer/driver_buzzer.h"
+#include "delay.h"
 
 void Key_Task(void *pvParameters)
 {
@@ -10,6 +12,10 @@ void Key_Task(void *pvParameters)
         key = Key_Scan(0);
         if (key)
         {
+            Buzzer_On();
+            DelayNms(50);
+            Buzzer_Off();
+            
             oled_dirty = 1;
             if (key == KEY1_PRES)
             {
@@ -31,11 +37,11 @@ void Key_Task(void *pvParameters)
                     else
                     {
                         rangeEditState = RANGE_EDIT_STATE_BROWSING;
+                        App_SaveRangeConfig();
                     }
                     oled_dirty = 1;
                 }
             }
-            xQueueSend(KeyEventQueue, &key, 0);
         }
         vTaskDelay(pdMS_TO_TICKS(10));
     }

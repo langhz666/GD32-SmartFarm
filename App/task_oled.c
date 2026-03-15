@@ -17,6 +17,28 @@ static void drawUnderline(uint8_t x, uint8_t y, uint8_t len, uint8_t isActive)
     }
 }
 
+static void reverseTitle(int16_t x, int16_t y, char *title, uint8_t fontSize)
+{
+    uint16_t width = 0;
+    char *p = title;
+    
+    while (*p != '\0')
+    {
+        if (*p >= 0x80)
+        {
+            width += 12;
+            p += 2;
+        }
+        else
+        {
+            width += 6;
+            p++;
+        }
+    }
+    
+    OLED_ReverseArea(x, y, width, fontSize);
+}
+
 static void renderRangePage1(void)
 {
     char buffer[32];
@@ -24,6 +46,7 @@ static void renderRangePage1(void)
     uint8_t minLen, maxLen;
 
     OLED_ShowString(28, 0, "报警阈值(1/2)", OLED_12X12);
+    reverseTitle(28, 0, "报警阈值(1/2)", OLED_12X12);
 
     floatToIntDec(farmSafeRange.minTemperature, &minInt, &minDec);
     floatToIntDec(farmSafeRange.maxTemperature, &maxInt, &maxDec);
@@ -31,10 +54,10 @@ static void renderRangePage1(void)
     maxLen = getIntLen(maxInt) + 2;
 
     sprintf(buffer, "%d.%d<温度<%d.%dC  ", minInt, minDec, maxInt, maxDec);
-    OLED_ShowString(0, 15, buffer, OLED_12X12);
+    OLED_ShowString(20, 15, buffer, OLED_12X12);
 
-    drawUnderline(0, 28, minLen * 6, (rangeEditIndex == RANGE_EDIT_TEMPERATURE_MIN));
-    drawUnderline(minLen * 6 + 36, 28, maxLen * 6, (rangeEditIndex == RANGE_EDIT_TEMPERATURE_MAX));
+    drawUnderline(20, 28, minLen * 6, (rangeEditIndex == RANGE_EDIT_TEMPERATURE_MIN));
+    drawUnderline(20 + minLen * 6 + 36, 28, maxLen * 6, (rangeEditIndex == RANGE_EDIT_TEMPERATURE_MAX));
 
     floatToIntDec(farmSafeRange.minHumidity, &minInt, &minDec);
     floatToIntDec(farmSafeRange.maxHumidity, &maxInt, &maxDec);
@@ -42,19 +65,19 @@ static void renderRangePage1(void)
     maxLen = getIntLen(maxInt) + 2;
 
     sprintf(buffer, "%d.%d<湿度<%d.%d%% ", minInt, minDec, maxInt, maxDec);
-    OLED_ShowString(0, 30, buffer, OLED_12X12);
+    OLED_ShowString(20, 30, buffer, OLED_12X12);
 
-    drawUnderline(0, 43, minLen * 6, (rangeEditIndex == RANGE_EDIT_HUMIDITY_MIN));
-    drawUnderline(minLen * 6 + 36, 43, maxLen * 6, (rangeEditIndex == RANGE_EDIT_HUMIDITY_MAX));
+    drawUnderline(20, 43, minLen * 6, (rangeEditIndex == RANGE_EDIT_HUMIDITY_MIN));
+    drawUnderline(20 + minLen * 6 + 36, 43, maxLen * 6, (rangeEditIndex == RANGE_EDIT_HUMIDITY_MAX));
 
     minLen = getIntLen(farmSafeRange.minLightIntensity);
     maxLen = getIntLen(farmSafeRange.maxLightIntensity);
 
     sprintf(buffer, "%d<光照<%d    ", farmSafeRange.minLightIntensity, farmSafeRange.maxLightIntensity);
-    OLED_ShowString(0, 45, buffer, OLED_12X12);
+    OLED_ShowString(20, 45, buffer, OLED_12X12);
 
-    drawUnderline(0, 58, minLen * 6, (rangeEditIndex == RANGE_EDIT_LIGHT_INTENSITY_MIN));
-    drawUnderline(minLen * 6 + 36, 58, maxLen * 6, (rangeEditIndex == RANGE_EDIT_LIGHT_INTENSITY_MAX));
+    drawUnderline(20, 58, minLen * 6, (rangeEditIndex == RANGE_EDIT_LIGHT_INTENSITY_MIN));
+    drawUnderline(20 + minLen * 6 + 36, 58, maxLen * 6, (rangeEditIndex == RANGE_EDIT_LIGHT_INTENSITY_MAX));
 }
 
 static void renderRangePage2(void)
@@ -63,22 +86,23 @@ static void renderRangePage2(void)
     uint8_t minLen, maxLen;
 
     OLED_ShowString(28, 0, "报警阈值(2/2)", OLED_12X12);
+    reverseTitle(28, 0, "报警阈值(2/2)", OLED_12X12);
 
     minLen = getIntLen(farmSafeRange.minSoilMoisture);
     maxLen = getIntLen(farmSafeRange.maxSoilMoisture);
 
     sprintf(buffer, "%d<土壤<%d%%   ", farmSafeRange.minSoilMoisture, farmSafeRange.maxSoilMoisture);
-    OLED_ShowString(0, 15, buffer, OLED_12X12);
+    OLED_ShowString(20, 15, buffer, OLED_12X12);
 
-    drawUnderline(0, 28, minLen * 6, (rangeEditIndex == RANGE_EDIT_SOIL_MOISTURE_MIN));
-    drawUnderline(minLen * 6 + 36, 28, maxLen * 6, (rangeEditIndex == RANGE_EDIT_SOIL_MOISTURE_MAX));
+    drawUnderline(20, 28, minLen * 6, (rangeEditIndex == RANGE_EDIT_SOIL_MOISTURE_MIN));
+    drawUnderline(20 + minLen * 6 + 36, 28, maxLen * 6, (rangeEditIndex == RANGE_EDIT_SOIL_MOISTURE_MAX));
 
     maxLen = getIntLen(farmSafeRange.maxRainGauge);
 
     sprintf(buffer, "降雨<%d%%      ", farmSafeRange.maxRainGauge);
-    OLED_ShowString(0, 30, buffer, OLED_12X12);
+    OLED_ShowString(20, 30, buffer, OLED_12X12);
 
-    drawUnderline(30, 43, maxLen * 6, (rangeEditIndex == RANGE_EDIT_RAIN_GAUGE_MAX));
+    drawUnderline(50, 43, maxLen * 6, (rangeEditIndex == RANGE_EDIT_RAIN_GAUGE_MAX));
 }
 
 void OLED_Task(void *pvParameters)
@@ -133,6 +157,7 @@ void OLED_Task(void *pvParameters)
                     if (xQueuePeek(SensorDataQueue, &sensor_data, 0) == pdTRUE)
                     {
                         OLED_ShowString(30, 0, "Smart Farm", OLED_12X12);
+                        reverseTitle(30, 0, "Smart Farm", OLED_12X12);
                         
                         OLED_ShowString(9, 14, "温度", OLED_12X12);
                         sprintf(buffer, "%d.%dC   ", (int)sensor_data.temp0, (int)((sensor_data.temp0 - (int)sensor_data.temp0) * 10));
@@ -155,7 +180,7 @@ void OLED_Task(void *pvParameters)
                         OLED_ShowString(58, 53, buffer, OLED_12X12);
                         
                         OLED_ShowString(95, 41, "水泵", OLED_12X12);
-                        OLED_ShowString(101, 53, "关", OLED_12X12);
+                        OLED_ShowString(101, 53, pumpState ? "开" : "关", OLED_12X12);
                     }
                 }
                 

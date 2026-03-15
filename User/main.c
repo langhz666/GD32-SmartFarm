@@ -32,15 +32,16 @@ int main(void)
     BMP280_Init();
     Key_Init();
     W25Q64_Init();
+    App_LoadRangeConfig();
     Buzzer_PWM_Init();
     ADC_DMA_MultiChannel_Init();
 
     App_CreateQueues();
     App_CreateSemaphores();
     App_CreateTasks();
-
     vTaskStartScheduler();
 
     printf("ERROR: Scheduler failed to start!\r\n");
     while(1);
 }
+

@@ -395,11 +395,6 @@
               <FilePath>..\App\app_utils.c</FilePath>
             </File>
             <File>
-              <FileName>task_bluetooth.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\App\task_bluetooth.c</FilePath>
-            </File>
-            <File>
               <FileName>task_encoder.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\App\task_encoder.c</FilePath>
