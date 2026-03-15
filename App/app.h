@@ -79,6 +79,7 @@ extern uint8_t pumpState;
 void App_SaveRangeConfig(void);
 void App_LoadRangeConfig(void);
 
+void App_InitDrivers(void);
 void App_CreateTasks(void);
 void App_CreateQueues(void);
 void App_CreateSemaphores(void);

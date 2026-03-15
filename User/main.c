@@ -1,41 +1,19 @@
+/*
+ * @Author: langhz666 3204498297@qq.com
+ * @Date: 2026-03-08 21:22:10
+ * @LastEditors: langhz666 3204498297@qq.com
+ * @LastEditTime: 2026-03-15 21:21:50
+ * @FilePath: \GD32F103C8T6\User\main.c
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 #include "gd32f10x.h"
 #include "gd32f10x_libopt.h"
 #include "app.h"
-#include "driver_led/driver_led.h"
-#include "delay.h"
-#include "driver_usart/driver_usart.h"
-#include "driver_bluetooth/driver_bluetooth.h"
-#include "driver_timer/driver_timer.h"
-#include "driver_oled/driver_oled.h"
-#include "driver_encoder/driver_encoder.h"
-#include "driver_light/iic_light.h"
-#include "driver_aht20/driver_aht20.h"
-#include "driver_bmp280/driver_bmp280.h"
-#include "driver_key/driver_key.h"
-#include "driver_w25q64/driver_w25q64.h"
-#include "driver_buzzer/driver_buzzer.h"
-#include "driver_adc/driver_adc.h"
+#include <stdio.h>
 
 int main(void)
 {
-    nvic_priority_group_set(NVIC_PRIGROUP_PRE4_SUB0);
-    
-    led_init();
-    DelayInit();
-    usart_config();
-    blt_config();
-    timer2_config();
-    OLED_Init();
-    Encoder_Init();
-    IIC_Light_Init();
-    AHT20_Init();
-    BMP280_Init();
-    Key_Init();
-    W25Q64_Init();
-    App_LoadRangeConfig();
-    Buzzer_PWM_Init();
-    ADC_DMA_MultiChannel_Init();
-
+    App_InitDrivers();
     App_CreateQueues();
     App_CreateSemaphores();
     App_CreateTasks();

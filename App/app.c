@@ -1,6 +1,18 @@
 #include "app_shared.h"
 #include "driver_led/driver_led.h"
 #include "driver_w25q64/driver_w25q64.h"
+#include "driver_usart/driver_usart.h"
+#include "driver_bluetooth/driver_bluetooth.h"
+#include "driver_timer/driver_timer.h"
+#include "driver_oled/driver_oled.h"
+#include "driver_encoder/driver_encoder.h"
+#include "driver_light/iic_light.h"
+#include "driver_aht20/driver_aht20.h"
+#include "driver_bmp280/driver_bmp280.h"
+#include "driver_key/driver_key.h"
+#include "driver_buzzer/driver_buzzer.h"
+#include "driver_adc/driver_adc.h"
+#include "delay.h"
 #include <string.h>
 
 QueueHandle_t SensorDataQueue = NULL;
@@ -39,6 +51,27 @@ void vApplicationStackOverflowHook(TaskHandle_t xTask, char *pcTaskName)
     for(;;)
     {
     }
+}
+
+void App_InitDrivers(void)
+{
+    nvic_priority_group_set(NVIC_PRIGROUP_PRE4_SUB0);
+    
+    led_init();
+    DelayInit();
+    usart_config();
+    blt_config();
+    timer2_config();
+    OLED_Init();
+    Encoder_Init();
+    IIC_Light_Init();
+    AHT20_Init();
+    BMP280_Init();
+    Key_Init();
+    W25Q64_Init();
+    App_LoadRangeConfig();
+    Buzzer_PWM_Init();
+    ADC_DMA_MultiChannel_Init();
 }
 
 void App_CreateQueues(void)
