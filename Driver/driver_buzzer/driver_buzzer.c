@@ -1,6 +1,5 @@
 #include "driver_buzzer/driver_buzzer.h"
-#include "driver_buzzer.h"
- // 请根据你的具体型号修改头文件，例如 gd32f30x.h
+
 
 
 

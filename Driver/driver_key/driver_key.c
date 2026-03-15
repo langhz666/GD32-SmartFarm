@@ -1,11 +1,3 @@
-/*
- * @Author: langhz666 3204498297@qq.com
- * @Date: 2026-03-12 14:31:21
- * @LastEditors: langhz666 3204498297@qq.com
- * @LastEditTime: 2026-03-14 20:49:00
- * @FilePath: \GD32F103C8T6\Driver\driver_key\driver_key.c
- * @Description: ����Ĭ������,������`customMade`, ��koroFileHeader�鿴���� ��������: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- */
 #include "driver_key/driver_key.h"
 #include "delay.h"
 #include <stdio.h>

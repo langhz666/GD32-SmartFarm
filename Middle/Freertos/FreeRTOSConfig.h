@@ -8,7 +8,7 @@
 #define configTICK_RATE_HZ                      1000
 #define configMAX_PRIORITIES                    5
 #define configMINIMAL_STACK_SIZE                128
-#define configTOTAL_HEAP_SIZE                   10240  // 10KB，为GD32F103C8T6优化
+#define configTOTAL_HEAP_SIZE                   8192  // 8KB，保守配置确保编译通过
 #define configMAX_TASK_NAME_LEN                 16
 #define configUSE_16_BIT_TICKS                  0
 #define configIDLE_SHOULD_YIELD                 1
@@ -41,6 +41,7 @@
 #define INCLUDE_vTaskDelay                      1
 #define INCLUDE_xTaskGetSchedulerState          1
 #define INCLUDE_xTaskGetCurrentTaskHandle       1
+#define INCLUDE_uxTaskGetStackHighWaterMark     1
 
 #define configLIBRARY_LOWEST_INTERRUPT_PRIORITY         15
 #define configLIBRARY_MAX_SYSCALL_INTERRUPT_PRIORITY     5
