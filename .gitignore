@@ -45,7 +45,7 @@ desktop.ini
 *~
 
 # 文档文件（可选，根据需要保留）
-*.pdf
+# *.pdf
 *.doc
 *.docx
 *.xls
