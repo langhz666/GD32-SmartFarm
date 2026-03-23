@@ -58,6 +58,9 @@ desktop.ini
 *.rar
 *.7z
 
+# PCB硬件文件例外
+!硬件pcb/*.zip
+
 # 日志文件
 *.log
 
