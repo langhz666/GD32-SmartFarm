@@ -79,6 +79,7 @@ RangeEditIndex_t rangeEditIndex = RANGE_EDIT_TEMPERATURE_MIN;  // 定义当前编辑的
 RangeEditState_t rangeEditState = RANGE_EDIT_STATE_BROWSING;   // 定义阈值编辑状态，初始为浏览状态
 uint8_t isEditingPage = 0;                                      // 定义是否在编辑页面标志，0表示不在编辑页面，1表示在编辑页面
 DisplayPage_t currentPage = PAGE_HOME;                          // 定义当前显示页面，初始为主页
+uint8_t buzzerAlarmEnabled = 1;                                 // 定义蜂鸣器警报开关，1表示开启，0表示关闭
 
 /* ==================== FreeRTOS钩子函数 ==================== */
 

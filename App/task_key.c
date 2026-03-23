@@ -76,7 +76,11 @@ void Key_Task(void *pvParameters)
             }
             else if (key == KEY2_PRES)  // 判断是否按下KEY2
             {
-                if (currentPage == PAGE_RANGE)  // 判断当前是否在阈值页面
+                if (currentPage == PAGE_HOME)  // 判断当前是否在主页
+                {
+                    buzzerAlarmEnabled = !buzzerAlarmEnabled;  // 切换蜂鸣器警报开关状态
+                }
+                else if (currentPage == PAGE_RANGE)  // 判断当前是否在阈值页面
                 {
                     if (rangeEditState == RANGE_EDIT_STATE_BROWSING)  // 判断当前是否在浏览模式
                     {

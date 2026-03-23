@@ -27,6 +27,7 @@ extern RangeEditIndex_t rangeEditIndex;  // 声明外部变量rangeEditIndex，当前编辑
 extern RangeEditState_t rangeEditState;  // 声明外部变量rangeEditState，阈值编辑状态（浏览/编辑）
 extern uint8_t isEditingPage;  // 声明外部变量isEditingPage，是否在编辑页面标志（0=不在编辑页面，1=在编辑页面）
 extern DisplayPage_t currentPage;  // 声明外部变量currentPage，当前显示页面（主页/阈值页）
+extern uint8_t buzzerAlarmEnabled;  // 声明外部变量buzzerAlarmEnabled，蜂鸣器警报开关（0=关闭，1=开启）
 
 void floatToIntDec(float value, int *intPart, int *decPart);  // 声明函数floatToIntDec，将浮点数拆分为整数部分和小数部分
 uint8_t getIntLen(int val);  // 声明函数getIntLen，获取整数的字符串长度

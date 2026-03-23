@@ -145,12 +145,15 @@ void Sensor_Task(void *pvParameters)
         
         if (alarmFlag)  // ≈–∂œ «∑Ò”–±®æØ
         {
-            for (uint8_t i = 0; i < 3; i++)  // —≠ª∑3¥Œ£¨≤˙…˙3…˘∑‰√˘∆˜±®æØ
+            if (buzzerAlarmEnabled)  // ≈–∂œ∑‰√˘∆˜æØ±® «∑Òø™∆Ù
             {
-                Buzzer_On();  // ø™∆Ù∑‰√˘∆˜
-                DelayNms(150);  // —” ±150∫¡√Î
-                Buzzer_Off();  // πÿ±’∑‰√˘∆˜
-                DelayNms(100);  // —” ±100∫¡√Î
+                for (uint8_t i = 0; i < 3; i++)  // —≠ª∑3¥Œ£¨≤˙…˙3…˘∑‰√˘∆˜±®æØ
+                {
+                    Buzzer_On();  // ø™∆Ù∑‰√˘∆˜
+                    DelayNms(150);  // —” ±150∫¡√Î
+                    Buzzer_Off();  // πÿ±’∑‰√˘∆˜
+                    DelayNms(100);  // —” ±100∫¡√Î
+                }
             }
         }
         
